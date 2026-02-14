@@ -5,6 +5,7 @@ import SpinScreen from './screens/SpinScreen';
 import ResultScreen from './screens/ResultScreen';
 import CodexScreen from './screens/CodexScreen';
 import GalleryScreen from './screens/GalleryScreen';
+import SettingsScreen from './screens/SettingsScreen';
 
 function AppContent() {
   const { state } = useGame();
@@ -21,6 +22,7 @@ function AppContent() {
         {state.currentScreen === 'result' && <ResultScreen key="result" />}
         {state.currentScreen === 'codex' && <CodexScreen key="codex" />}
         {state.currentScreen === 'gallery' && <GalleryScreen key="gallery" />}
+        {state.currentScreen === 'settings' && <SettingsScreen key="settings" />}
       </AnimatePresence>
     </div>
   );
