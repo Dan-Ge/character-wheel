@@ -116,13 +116,21 @@ export default function HomeScreen() {
         ))}
       </div>
 
-      {/* Sound Toggle */}
-      <button
-        onClick={handleToggleSound}
-        className="text-sm text-surface-400 hover:text-white transition-colors"
-      >
-        {state.settings.soundEnabled ? '🔊 Sound On' : '🔇 Sound Off'}
-      </button>
+      {/* Sound Toggle & Settings */}
+      <div className="flex items-center gap-4">
+        <button
+          onClick={handleToggleSound}
+          className="text-sm text-surface-400 hover:text-white transition-colors"
+        >
+          {state.settings.soundEnabled ? '🔊 Sound On' : '🔇 Sound Off'}
+        </button>
+        <button
+          onClick={() => { play('navigate'); dispatch({ type: 'NAVIGATE', screen: 'settings' }); }}
+          className="text-sm text-surface-400 hover:text-white transition-colors"
+        >
+          ⚙️ Settings
+        </button>
+      </div>
 
       {/* Footer */}
       <div className="text-xs text-surface-400/50 mt-auto pt-8">
