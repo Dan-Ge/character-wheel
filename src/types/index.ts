@@ -225,4 +225,5 @@ export type Screen =
   | 'result'
   | 'codex'
   | 'gallery'
-  | 'settings';
+  | 'settings'
+  | 'story';  // Story Adventure mode
