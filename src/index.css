@@ -1,72 +1,164 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+/* ── Tailwind v4 Theme Configuration ── */
+@theme {
+  /* Core dark background palette */
+  --color-surface: #0a0a0f;
+  --color-surface-50: #12121a;
+  --color-surface-100: #1a1a25;
+  --color-surface-200: #222230;
+  --color-surface-300: #2a2a3b;
+  --color-surface-400: #333346;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* Accent / Neon */
+  --color-accent: #6366f1;
+  --color-accent-light: #818cf8;
+  --color-accent-dark: #4f46e5;
+  --color-accent-glow: #6366f1;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  --color-neon-cyan: #22d3ee;
+  --color-neon-pink: #ec4899;
+  --color-neon-green: #22c55e;
+  --color-neon-orange: #f97316;
+  --color-neon-violet: #a855f7;
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
+  /* Rarity colors */
+  --color-rarity-common: #9ca3af;
+  --color-rarity-uncommon: #22c55e;
+  --color-rarity-rare: #3b82f6;
+  --color-rarity-epic: #a855f7;
+  --color-rarity-legendary: #eab308;
+  --color-rarity-mythic: #ec4899;
+  --color-rarity-forbidden: #ef4444;
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
+  /* Fonts */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Orbitron', monospace;
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
+  /* Animations */
+  --animate-spin-wheel: spin-wheel 3s cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards;
+  --animate-glow-pulse: glow-pulse 2s ease-in-out infinite;
+  --animate-reveal-card: reveal-card 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  --animate-shake: shake 0.5s ease-in-out;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-slide-up: slide-up 0.4s ease-out forwards;
+  --animate-fade-in: fade-in 0.3s ease-out forwards;
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+  /* Keyframes */
+  @keyframes spin-wheel {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(var(--spin-degrees, 1800deg)); }
   }
-  a:hover {
-    color: #747bff;
+
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
   }
-  button {
-    background-color: #f9f9f9;
+
+  @keyframes reveal-card {
+    0% { transform: scale(0.3) rotateY(90deg); opacity: 0; }
+    50% { transform: scale(1.1) rotateY(0deg); opacity: 1; }
+    100% { transform: scale(1) rotateY(0deg); opacity: 1; }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+    20%, 40%, 60%, 80% { transform: translateX(4px); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+}
+
+/* ── Base Styles ── */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+
+/* ── Component Utilities ── */
+@layer components {
+  .glow-common {
+    box-shadow: 0 0 8px rgba(156, 163, 175, 0.3);
+  }
+  .glow-uncommon {
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+  }
+  .glow-rare {
+    box-shadow: 0 0 16px rgba(59, 130, 246, 0.5);
+  }
+  .glow-epic {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+  }
+  .glow-legendary {
+    box-shadow: 0 0 24px rgba(234, 179, 8, 0.6), 0 0 48px rgba(234, 179, 8, 0.2);
+  }
+  .glow-mythic {
+    box-shadow: 0 0 28px rgba(236, 72, 153, 0.6), 0 0 56px rgba(168, 85, 247, 0.3);
+  }
+  .glow-forbidden {
+    box-shadow: 0 0 32px rgba(239, 68, 68, 0.7), 0 0 64px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* ── Utility Overrides ── */
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
