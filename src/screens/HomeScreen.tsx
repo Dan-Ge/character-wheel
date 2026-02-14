@@ -1,8 +1,42 @@
+import { useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useGame } from '../context/GameContext';
+import { useSound } from '../hooks/useSound';
+import { cyberMythicSeason } from '../data/seasons/cyberMythic';
+import type { GameMode } from '../types';
+
+const MODES: { id: GameMode; label: string; icon: string; color: string; hoverBorder: string }[] = [
+  { id: 'normal', label: 'Normal', icon: '🎯', color: 'text-white', hoverBorder: 'hover:border-accent/50' },
+  { id: 'cursed', label: 'Cursed', icon: '☠️', color: 'text-neon-pink', hoverBorder: 'hover:border-neon-pink/50' },
+  { id: 'draft', label: 'Draft', icon: '🃏', color: 'text-neon-cyan', hoverBorder: 'hover:border-neon-cyan/50' },
+  { id: 'duo', label: 'Duo', icon: '👥', color: 'text-neon-violet', hoverBorder: 'hover:border-neon-violet/50' },
+];
 
 export default function HomeScreen() {
-  const { dispatch } = useGame();
+  const { state, dispatch } = useGame();
+  const { play } = useSound();
+
+  const season = cyberMythicSeason;
+
+  const totalSegments = useMemo(
+    () => season.wheels.reduce((sum, w) => sum + w.segments.length, 0),
+    [season.wheels],
+  );
+
+  const handleStart = useCallback(() => {
+    play('navigate');
+    dispatch({ type: 'SELECT_SEASON', season });
+    dispatch({ type: 'NAVIGATE', screen: 'spin' });
+  }, [dispatch, play, season]);
+
+  const handleModeSelect = useCallback((mode: GameMode) => {
+    play('navigate');
+    dispatch({ type: 'SET_GAME_MODE', mode });
+  }, [dispatch, play]);
+
+  const handleToggleSound = useCallback(() => {
+    dispatch({ type: 'UPDATE_SETTINGS', settings: { soundEnabled: !state.settings.soundEnabled } });
+  }, [dispatch, state.settings.soundEnabled]);
 
   return (
     <motion.div
@@ -22,22 +56,20 @@ export default function HomeScreen() {
         </p>
       </div>
 
-      {/* Season Preview (Placeholder) */}
+      {/* Season Preview */}
       <div className="w-full max-w-md">
         <div className="bg-surface-100 rounded-2xl border border-surface-300 p-6 text-center space-y-4">
           <div className="text-sm text-neon-cyan font-display uppercase tracking-widest">
             Season 1
           </div>
-          <h2 className="text-2xl font-bold">Cyber-Mythic</h2>
-          <p className="text-surface-400 text-sm">
-            Where ancient myths collide with neon circuits.
-          </p>
-          <div className="flex flex-wrap justify-center gap-2 text-xs">
-            {['🔥 Fire', '⚡ Tech', '🌀 Void', '🧬 Mutation', '✨ Arcane'].map(tag => (
-              <span key={tag} className="bg-surface-200 px-2 py-1 rounded-full text-gray-300">
-                {tag}
-              </span>
-            ))}
+          <h2 className="text-2xl font-bold">{season.name}</h2>
+          <p className="text-surface-400 text-sm">{season.theme}</p>
+          <div className="flex justify-center gap-4 text-xs text-surface-400">
+            <span>{season.wheels.length} Wheels</span>
+            <span>·</span>
+            <span>{totalSegments} Segments</span>
+            <span>·</span>
+            <span>{season.limitedSegments.length} Limited</span>
           </div>
         </div>
       </div>
@@ -45,7 +77,7 @@ export default function HomeScreen() {
       {/* Action Buttons */}
       <div className="flex flex-col gap-3 w-full max-w-xs">
         <button
-          onClick={() => dispatch({ type: 'NAVIGATE', screen: 'spin' })}
+          onClick={handleStart}
           className="w-full py-4 px-6 bg-linear-to-r from-accent to-neon-pink rounded-xl font-display font-bold text-lg tracking-wide text-white shadow-lg shadow-accent/25 hover:shadow-accent/40 active:scale-95 transition-all duration-200"
         >
           START RUN
@@ -53,13 +85,13 @@ export default function HomeScreen() {
 
         <div className="flex gap-3">
           <button
-            onClick={() => dispatch({ type: 'NAVIGATE', screen: 'codex' })}
+            onClick={() => { play('navigate'); dispatch({ type: 'NAVIGATE', screen: 'codex' }); }}
             className="flex-1 py-3 px-4 bg-surface-100 border border-surface-300 rounded-xl font-medium text-sm text-gray-300 hover:border-accent/50 hover:text-white active:scale-95 transition-all duration-200"
           >
             📖 Codex
           </button>
           <button
-            onClick={() => dispatch({ type: 'NAVIGATE', screen: 'gallery' })}
+            onClick={() => { play('navigate'); dispatch({ type: 'NAVIGATE', screen: 'gallery' }); }}
             className="flex-1 py-3 px-4 bg-surface-100 border border-surface-300 rounded-xl font-medium text-sm text-gray-300 hover:border-accent/50 hover:text-white active:scale-95 transition-all duration-200"
           >
             🏆 Gallery
@@ -67,22 +99,34 @@ export default function HomeScreen() {
         </div>
       </div>
 
-      {/* Game Mode Selector (Placeholder) */}
-      <div className="flex gap-2 text-xs text-surface-400">
-        <span className="bg-surface-200 px-3 py-1 rounded-full border border-surface-300 cursor-pointer hover:border-accent/50 hover:text-white transition-colors">
-          Normal
-        </span>
-        <span className="bg-surface-200 px-3 py-1 rounded-full border border-surface-300 cursor-pointer hover:border-neon-pink/50 hover:text-neon-pink transition-colors">
-          ☠️ Cursed
-        </span>
-        <span className="bg-surface-200 px-3 py-1 rounded-full border border-surface-300 cursor-pointer hover:border-neon-cyan/50 hover:text-neon-cyan transition-colors">
-          🃏 Draft
-        </span>
+      {/* Game Mode Selector */}
+      <div className="flex gap-2 text-xs">
+        {MODES.map(m => (
+          <button
+            key={m.id}
+            onClick={() => handleModeSelect(m.id)}
+            className={`px-3 py-1 rounded-full border transition-colors ${
+              state.gameMode === m.id
+                ? `${m.color} border-current bg-surface-200`
+                : `text-surface-400 border-surface-300 ${m.hoverBorder} hover:${m.color}`
+            }`}
+          >
+            {m.icon} {m.label}
+          </button>
+        ))}
       </div>
+
+      {/* Sound Toggle */}
+      <button
+        onClick={handleToggleSound}
+        className="text-sm text-surface-400 hover:text-white transition-colors"
+      >
+        {state.settings.soundEnabled ? '🔊 Sound On' : '🔇 Sound Off'}
+      </button>
 
       {/* Footer */}
       <div className="text-xs text-surface-400/50 mt-auto pt-8">
-        v0.1.0 · Season 1: Cyber-Mythic
+        v0.1.0 · Season 1: {season.name}
       </div>
     </motion.div>
   );

@@ -81,6 +81,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         currentScreen: 'result',
         currentRun: null,
         currentWheelIndex: 0,
+        savedBuilds: [action.build, ...state.savedBuilds],
       };
 
     case 'SAVE_BUILD':
