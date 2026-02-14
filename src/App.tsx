@@ -1,28 +1,31 @@
-// src/App.tsx
+import { AnimatePresence } from 'framer-motion';
+import { useGame } from './context/GameContext';
+import HomeScreen from './screens/HomeScreen';
+import SpinScreen from './screens/SpinScreen';
+import ResultScreen from './screens/ResultScreen';
+import CodexScreen from './screens/CodexScreen';
+import GalleryScreen from './screens/GalleryScreen';
 
-// Den Import von App.css können wir lassen, auch wenn die Datei leer ist,
-// oder du kannst ihn löschen, wenn du möchtest.
-import './App.css'; 
+function AppContent() {
+  const { state } = useGame();
 
-function App() {
-  // Wir geben ein Haupt-Div zurück, das den Bildschirm füllt (min-h-screen),
-  // einen dunklen Hintergrund hat (bg-gray-900), weiße Schrift (text-white)
-  // und den Inhalt zentriert (flex, items-center, justify-center).
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
+    <div className="min-h-dvh bg-surface text-white flex flex-col relative overflow-hidden">
+      {/* Subtle background gradient */}
+      <div className="fixed inset-0 bg-gradient-radial from-accent/5 via-transparent to-transparent pointer-events-none" />
 
-      {/* Eine einfache Überschrift für unser Projekt */}
-      <h1 className="text-4xl font-bold mb-6">
-        Character Wheel 🔮
-      </h1>
-
-      {/* Platzhalter für das zukünftige Rad */}
-      <div className="text-center text-gray-400">
-        <p>(Hier wird bald das Rad erscheinen...)</p>
-      </div>
-
+      {/* Screen Router */}
+      <AnimatePresence mode="wait">
+        {state.currentScreen === 'home' && <HomeScreen key="home" />}
+        {state.currentScreen === 'spin' && <SpinScreen key="spin" />}
+        {state.currentScreen === 'result' && <ResultScreen key="result" />}
+        {state.currentScreen === 'codex' && <CodexScreen key="codex" />}
+        {state.currentScreen === 'gallery' && <GalleryScreen key="gallery" />}
+      </AnimatePresence>
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  return <AppContent />;
+}
