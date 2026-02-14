@@ -1,0 +1,17 @@
+// tsconfig.node.json
+{
+  "compilerOptions": {
+    // Wichtige Optionen für Node.js-Umgebung (z.B. für vite.config.ts)
+    "composite": true, // Wichtig für Projekt-Referenzen, setzen wir sicherheitshalber
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler", // Oder "NodeNext", je nach Vite/TS-Version, "bundler" ist oft aktuell
+    "allowSyntheticDefaultImports": true,
+    "strict": true, // Empfohlen für Typsicherheit
+    "noEmit": true // Normalerweise wird hier nichts separat ausgegeben
+    // Die Zeile "tsBuildInfoFile" wurde entfernt, um den Fehler zu beheben
+  },
+  "include": [
+    "vite.config.ts" // Wichtig: Bezieht die Vite-Konfigurationsdatei mit ein
+  ]
+}
