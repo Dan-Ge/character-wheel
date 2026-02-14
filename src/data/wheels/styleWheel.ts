@@ -1,2 +1,180 @@
-// Wheel data placeholder files
-export {};
+// ── Style Wheel ──
+// Determines the character's visual theme and cosmetic flair.
+// Purely aesthetic + minor stat bonuses. Season 1: Cyber Mythic
+
+import { Rarity } from '../../types';
+import type { WheelModule } from '../../types';
+
+export const styleWheel: WheelModule = {
+  id: 'wheel-style',
+  name: 'Style',
+  category: 'style',
+  icon: '🎨',
+  visualTheme: 'style-pink',
+  description: 'How do you look? Style IS substance.',
+  order: 7,
+  segments: [
+    {
+      id: 'style-street-casual',
+      label: 'Street Casual',
+      rarity: Rarity.Common,
+      weight: 40,
+      tags: ['stealth'],
+      effects: [
+        { type: 'cosmetic', description: 'Hoodie, jeans, sneakers. Blends into any crowd.' },
+        { type: 'stat_boost', target: 'charisma', value: 2, description: '+2 CHA. Relatable aesthetic.' },
+      ],
+      lore: 'You look like everyone else. That is either your greatest strength or your deepest insecurity.',
+    },
+    {
+      id: 'style-industrial-chic',
+      label: 'Industrial Chic',
+      rarity: Rarity.Common,
+      weight: 40,
+      tags: ['tech'],
+      effects: [
+        { type: 'cosmetic', description: 'Work boots, utility belt, safety goggles on forehead.' },
+        { type: 'stat_boost', target: 'defense', value: 3, description: '+3 DEF. Safety first.' },
+      ],
+      lore: 'Form follows function. You look like you could fix a spaceship AND look good doing it.',
+    },
+    {
+      id: 'style-gothic-edge',
+      label: 'Gothic Edge',
+      rarity: Rarity.Uncommon,
+      weight: 25,
+      tags: ['shadow', 'necro'],
+      effects: [
+        { type: 'cosmetic', description: 'Black everything. Chains. Dark makeup. Dramatic cape.' },
+        { type: 'stat_boost', target: 'charisma', value: 5, description: '+5 CHA. Intimidating presence.' },
+        { type: 'passive', description: 'Shadow-tagged abilities look 50% cooler.' },
+      ],
+      lore: 'You are not going through a phase. This is who you are. Your mother disagrees.',
+    },
+    {
+      id: 'style-neon-punk',
+      label: 'Neon Punk',
+      rarity: Rarity.Uncommon,
+      weight: 25,
+      tags: ['cyber', 'plasma'],
+      effects: [
+        { type: 'cosmetic', description: 'Glowing hair, LED jacket, holographic accessories.' },
+        { type: 'stat_boost', target: 'charisma', value: 6, description: '+6 CHA. Impossible to ignore.' },
+        { type: 'passive', description: 'You glow in the dark. Stealth penalty in darkness.' },
+      ],
+      lore: 'Walking billboard of the future. You draw every eye in the room. Good for confidence. Bad for hiding.',
+      visualTheme: 'neon-glow',
+    },
+    {
+      id: 'style-nature-druid',
+      label: 'Nature Druid',
+      rarity: Rarity.Uncommon,
+      weight: 25,
+      tags: ['nature', 'beast'],
+      effects: [
+        { type: 'cosmetic', description: 'Living vines as clothing. Flowers bloom seasonally.' },
+        { type: 'stat_boost', target: 'vitality', value: 5, description: '+5 VIT. Nature sustains you.' },
+        { type: 'passive', description: 'Animals are friendly. Birds land on you dramatically.' },
+      ],
+      lore: 'Your outfit is alive. It photosynthesizes. Saves money on laundry. Attracts bees.',
+    },
+    {
+      id: 'style-chrome-samurai',
+      label: 'Chrome Samurai',
+      rarity: Rarity.Rare,
+      weight: 18,
+      tags: ['mecha', 'precision'],
+      effects: [
+        { type: 'cosmetic', description: 'Sleek cyber-armor with katana holster. Honor code optional.' },
+        { type: 'stat_boost', target: 'attack', value: 8, description: '+8 ATK. Looking sharp. Literally.' },
+        { type: 'passive', description: 'First attack each battle is always a critical hit.' },
+      ],
+      lore: 'The way of the blade, updated for the digital age. Your code of honor has a GitHub repo.',
+      visualTheme: 'chrome-red',
+    },
+    {
+      id: 'style-retro-gamer',
+      label: 'Retro Gamer',
+      rarity: Rarity.Rare,
+      weight: 18,
+      tags: ['retro', 'tech'],
+      effects: [
+        { type: 'cosmetic', description: '8-bit aesthetic. Pixel art overlays. Chiptune theme music.' },
+        { type: 'stat_boost', target: 'charisma', value: 8, description: '+8 CHA. Nostalgia is powerful.' },
+        { type: 'passive', description: 'Extra life: survive a lethal hit with 1 HP. Once per run.' },
+      ],
+      lore: 'You look like you fell out of 1987. Intentionally. The pixels are a lifestyle choice.',
+      visualTheme: 'pixel-art',
+    },
+    {
+      id: 'style-holy-knight',
+      label: 'Holy Knight',
+      rarity: Rarity.Rare,
+      weight: 18,
+      tags: ['holy', 'tank'],
+      effects: [
+        { type: 'cosmetic', description: 'Gleaming white-gold armor. Cape with sacred symbols. Halo optional.' },
+        { type: 'stat_boost', target: 'defense', value: 10, description: '+10 DEF. Righteousness is armor.' },
+        { type: 'passive', description: 'Allied morale boost: nearby allies gain +5% damage.' },
+      ],
+      lore: 'You shine so bright enemies need sunglasses. The dry cleaning bills are astronomical.',
+    },
+    {
+      id: 'style-eldritch-scholar',
+      label: 'Eldritch Scholar',
+      rarity: Rarity.Epic,
+      weight: 10,
+      tags: ['arcane', 'psychic', 'void'],
+      effects: [
+        { type: 'cosmetic', description: 'Floating robes with impossible geometry. Eyes that see too much.' },
+        { type: 'stat_boost', target: 'intelligence', value: 15, description: '+15 INT. Knowledge at a cost.' },
+        { type: 'passive', description: 'Spellcasting animations enhanced. Purple particle effects.' },
+      ],
+      lore: 'Your robes are annotated with notes in languages that have not been invented yet.',
+      visualTheme: 'eldritch-purple',
+    },
+    {
+      id: 'style-cosmic-emperor',
+      label: 'Cosmic Emperor',
+      rarity: Rarity.Legendary,
+      weight: 5,
+      tags: ['cosmic', 'charisma'],
+      effects: [
+        { type: 'cosmetic', description: 'Armor of compacted starlight. Crown of small orbiting planets.' },
+        { type: 'stat_boost', target: 'charisma', value: 25, description: '+25 CHA. Bow before the cosmos.' },
+        { type: 'passive', description: 'Presence: enemies hesitate for 1s before attacking you.' },
+      ],
+      lore: 'You wear the universe. Every step leaves stardust. Your cape is a nebula. It is fabulous.',
+      visualTheme: 'starfield',
+    },
+    {
+      id: 'style-living-glitch',
+      label: 'Living Glitch',
+      rarity: Rarity.Mythic,
+      weight: 1.5,
+      tags: ['void', 'temporal', 'cyber'],
+      effects: [
+        { type: 'cosmetic', description: 'Your appearance constantly shifts. Pixels, static, fragments of code.' },
+        { type: 'stat_boost', target: 'all', value: 8, description: '+8 all. Undefined is powerful.' },
+        { type: 'passive', description: 'Hard to target: -25% enemy accuracy against you.' },
+      ],
+      lore: 'You look like a rendering error. Screenshots of you crash image editors.',
+      visualTheme: 'glitch-shift',
+    },
+    {
+      id: 'style-singularity-form',
+      label: 'Singularity Form',
+      rarity: Rarity.Forbidden,
+      weight: 0.5,
+      tags: ['cosmic', 'void', 'mutation'],
+      effects: [
+        { type: 'cosmetic', description: 'You are a walking black hole. Light bends around you. You have no face.' },
+        { type: 'stat_boost', target: 'all', value: 15, description: '+15 all. You transcend form.' },
+        { type: 'passive', description: 'Gravitational pull: nearby projectiles curve toward you (some miss, some hit harder).' },
+        { type: 'curse', description: 'NPCs refuse to talk to you. You are too unsettling.' },
+      ],
+      lore: 'You are not visible. You are an absence of everything. Chairs do not know what to do with you.',
+      visualTheme: 'forbidden-pulse',
+    },
+  ],
+};
