@@ -59,7 +59,6 @@ export {
 
 export {
   WORLD_REGIONS,
-  REGION_MODIFIERS,
   getConnectedRegions,
   getRegionsByDanger,
   getRegionTagBoost,

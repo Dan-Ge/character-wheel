@@ -16,6 +16,7 @@ import type {
   StoryCondition,
   StoryEffect,
 } from '../types/storyTypes';
+import { Rarity } from '../types';
 import type { Tag } from '../types';
 import { spinFateWheel } from './fateWheel';
 import { getEligibleEvents } from './storyEvents';
@@ -340,7 +341,7 @@ function applyEffect(
             name: effect.stringValue,
             description: effect.description,
             effect,
-            rarity: 'uncommon' as const,
+            rarity: Rarity.Uncommon,
             sourceEventId: '',
             permanent: true,
             acquiredAt: Date.now(),
@@ -366,7 +367,7 @@ function applyEffect(
             name: effect.stringValue,
             description: effect.description,
             itemType: 'artifact',
-            rarity: 'uncommon' as const,
+            rarity: Rarity.Uncommon,
             effects: [],
             uses: null,
             lore: effect.description,
@@ -793,7 +794,7 @@ function determineSentiment(
   return 'neutral';
 }
 
-function generateChapterTitle(region: string, chapterNum: number): string {
+function generateChapterTitle(_region: string, chapterNum: number): string {
   const epics = [
     'The Awakening', 'Dark Tides', 'Shattered Flames', 'Echoes of War',
     'The Hunt Begins', 'Storm Rising', 'Shadows Fall', 'Last Stand',

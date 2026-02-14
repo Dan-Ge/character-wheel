@@ -49,7 +49,7 @@ export default function SpinScreen() {
 
       {/* Spin Button */}
       <button
-        className="w-full max-w-xs py-5 bg-gradient-to-r from-accent to-accent-light rounded-2xl font-display font-bold text-xl tracking-widest text-white shadow-lg shadow-accent/30 hover:shadow-accent/50 active:scale-95 transition-all duration-200"
+        className="w-full max-w-xs py-5 bg-linear-to-r from-accent to-accent-light rounded-2xl font-display font-bold text-xl tracking-widest text-white shadow-lg shadow-accent/30 hover:shadow-accent/50 active:scale-95 transition-all duration-200"
       >
         SPIN
       </button>
@@ -65,25 +65,25 @@ export default function SpinScreen() {
       {/* Collected Results (mini cards) */}
       <div className="w-full max-w-md">
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          <div className="flex-shrink-0 w-16 h-20 bg-surface-100 border border-surface-300 rounded-lg flex items-center justify-center text-surface-400 text-xs text-center p-1">
+          <div className="shrink-0 w-16 h-20 bg-surface-100 border border-surface-300 rounded-lg flex items-center justify-center text-surface-400 text-xs text-center p-1">
             Slot 1
           </div>
-          <div className="flex-shrink-0 w-16 h-20 bg-surface-100 border border-dashed border-surface-300 rounded-lg flex items-center justify-center text-surface-400/50 text-xs">
+          <div className="shrink-0 w-16 h-20 bg-surface-100 border border-dashed border-surface-300 rounded-lg flex items-center justify-center text-surface-400/50 text-xs">
             ?
           </div>
-          <div className="flex-shrink-0 w-16 h-20 bg-surface-100 border border-dashed border-surface-300 rounded-lg flex items-center justify-center text-surface-400/50 text-xs">
+          <div className="shrink-0 w-16 h-20 bg-surface-100 border border-dashed border-surface-300 rounded-lg flex items-center justify-center text-surface-400/50 text-xs">
             ?
           </div>
-          <div className="flex-shrink-0 w-16 h-20 bg-surface-100 border border-dashed border-surface-300 rounded-lg flex items-center justify-center text-surface-400/50 text-xs">
+          <div className="shrink-0 w-16 h-20 bg-surface-100 border border-dashed border-surface-300 rounded-lg flex items-center justify-center text-surface-400/50 text-xs">
             ?
           </div>
-          <div className="flex-shrink-0 w-16 h-20 bg-surface-100 border border-dashed border-surface-300 rounded-lg flex items-center justify-center text-surface-400/50 text-xs">
+          <div className="shrink-0 w-16 h-20 bg-surface-100 border border-dashed border-surface-300 rounded-lg flex items-center justify-center text-surface-400/50 text-xs">
             ?
           </div>
-          <div className="flex-shrink-0 w-16 h-20 bg-surface-100 border border-dashed border-surface-300 rounded-lg flex items-center justify-center text-surface-400/50 text-xs">
+          <div className="shrink-0 w-16 h-20 bg-surface-100 border border-dashed border-surface-300 rounded-lg flex items-center justify-center text-surface-400/50 text-xs">
             ?
           </div>
-          <div className="flex-shrink-0 w-16 h-20 bg-surface-100 border border-dashed border-surface-300 rounded-lg flex items-center justify-center text-surface-400/50 text-xs">
+          <div className="shrink-0 w-16 h-20 bg-surface-100 border border-dashed border-surface-300 rounded-lg flex items-center justify-center text-surface-400/50 text-xs">
             ?
           </div>
         </div>

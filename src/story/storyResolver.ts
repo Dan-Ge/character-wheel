@@ -10,10 +10,8 @@ import type {
   StoryOutcome,
   StoryEventResult,
   StoryChapter,
-  StoryEffect,
   PvPEncounter,
 } from '../types/storyTypes';
-import type { Tag } from '../types';
 import {
   rollCheck,
   applyOutcome,
@@ -21,16 +19,13 @@ import {
   recordEventResult,
   completeChapter,
   generateNextEvent,
-  getAvailableChoices,
-  initStoryCharacter,
   getXpToNextLevel,
 } from './storyEngine';
 import {
   resolvePvPEncounter,
   applyPvPResults,
-  findOpponents,
 } from './pvpSystem';
-import { getRegion, getStartingRegions } from './worldRegions';
+import { getRegion } from './worldRegions';
 
 // ═══════════════════════════════════════════════
 // ─── Story Flow Orchestration ───

@@ -17,7 +17,7 @@ export default function ResultScreen() {
         <div className="text-xs font-display text-neon-cyan uppercase tracking-widest">
           Build Complete
         </div>
-        <h1 className="font-display text-3xl md:text-4xl font-black bg-gradient-to-r from-rarity-legendary via-neon-orange to-rarity-legendary bg-clip-text text-transparent">
+        <h1 className="font-display text-3xl md:text-4xl font-black bg-linear-to-r from-rarity-legendary via-neon-orange to-rarity-legendary bg-clip-text text-transparent">
           Neon Paladin of Static Mercy
         </h1>
         <div className="text-surface-400 text-sm">
@@ -42,7 +42,7 @@ export default function ResultScreen() {
       </div>
 
       {/* Signature Combo */}
-      <div className="w-full max-w-lg bg-gradient-to-r from-surface-100 to-surface-200 border border-accent/30 rounded-xl p-4 space-y-2">
+      <div className="w-full max-w-lg bg-linear-to-r from-surface-100 to-surface-200 border border-accent/30 rounded-xl p-4 space-y-2">
         <div className="text-xs font-display text-accent uppercase tracking-widest">
           ⚡ Signature Combo
         </div>
@@ -64,7 +64,7 @@ export default function ResultScreen() {
 
       {/* Actions */}
       <div className="flex flex-col gap-3 w-full max-w-xs pb-8">
-        <button className="w-full py-3 bg-gradient-to-r from-neon-green to-neon-cyan rounded-xl font-display font-bold tracking-wide text-white active:scale-95 transition-all">
+        <button className="w-full py-3 bg-linear-to-r from-neon-green to-neon-cyan rounded-xl font-display font-bold tracking-wide text-white active:scale-95 transition-all">
           📸 Share Build
         </button>
         <button className="w-full py-3 bg-surface-100 border border-surface-300 rounded-xl font-medium text-gray-300 hover:border-accent/50 active:scale-95 transition-all">

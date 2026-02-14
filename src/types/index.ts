@@ -21,7 +21,8 @@ export type Tag =
   | 'support' | 'summoner' | 'retro' | 'arcane' | 'cyber'
   | 'plasma' | 'nature' | 'psychic' | 'shadow' | 'holy'
   | 'mecha' | 'beast' | 'speed' | 'brute' | 'charisma'
-  | 'precision' | 'mutation' | 'cosmic' | 'necro' | 'temporal';
+  | 'precision' | 'mutation' | 'cosmic' | 'necro' | 'temporal'
+  | 'melee' | 'brutal' | 'heavy' | 'ranged' | 'divine' | 'cursed';
 
 // ─── Wheel Category ───
 

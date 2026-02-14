@@ -14,8 +14,6 @@ import type {
   StoryCharacter,
   StoryEvent,
   StoryChapter,
-  PvPEncounter,
-  WorldRegion,
 } from '../types/storyTypes';
 import type { CharacterBuild } from '../types';
 import { WORLD_REGIONS } from './worldRegions';
@@ -130,14 +128,14 @@ function storyReducer(state: StoryState, action: StoryAction): StoryState {
 
     case 'START_CHAPTER': {
       if (!state.activeCharacter) return state;
-      const { character, chapter } = beginStorySession(
+      const { character: chapterChar } = beginStorySession(
         state.activeCharacter,
         action.difficulty
       );
       return {
         ...state,
-        activeCharacter: character,
-        characters: updateCharInList(state.characters, character),
+        activeCharacter: chapterChar,
+        characters: updateCharInList(state.characters, chapterChar),
         storyScreen: 'adventure',
       };
     }
@@ -191,7 +189,7 @@ function storyReducer(state: StoryState, action: StoryAction): StoryState {
 
     case 'TRAVEL': {
       if (!state.activeCharacter) return state;
-      const { success, character, message } = travelToRegion(
+      const { success, character: travelChar } = travelToRegion(
         state.activeCharacter,
         action.regionId
       );
@@ -200,8 +198,8 @@ function storyReducer(state: StoryState, action: StoryAction): StoryState {
 
       return {
         ...state,
-        activeCharacter: character,
-        characters: updateCharInList(state.characters, character),
+        activeCharacter: travelChar,
+        characters: updateCharInList(state.characters, travelChar),
         storyScreen: 'story_hub',
       };
     }
@@ -216,7 +214,7 @@ function storyReducer(state: StoryState, action: StoryAction): StoryState {
       const {
         encounter,
         updatedAttacker,
-        updatedDefender,
+        updatedDefender: _updatedDefender,
         notifications,
       } = initiatePvP(state.activeCharacter, defender, action.seed);
 

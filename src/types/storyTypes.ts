@@ -3,7 +3,7 @@
 // Characters live through procedurally generated stories with risk,
 // rewards, alliances, rivalries, death, and ascension.
 
-import type { Tag, Rarity, CharacterBuild, Effect } from './index';
+import type { Tag, Rarity, CharacterBuild } from './index';
 
 // ═══════════════════════════════════════════════
 // ─── Character Status & Lifecycle ───

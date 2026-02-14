@@ -38,6 +38,12 @@ const TAG_COUNTERS: Record<string, Tag[]> = {
   holy: ['necro', 'shadow'],
   psychic: ['brute', 'beast'],
   speed: ['tank', 'heavy'],
+  melee: ['ranged', 'stealth'],
+  ranged: ['melee', 'brute'],
+  divine: ['void', 'necro'],
+  brutal: ['precision', 'stealth'],
+  heavy: ['speed', 'precision'],
+  cursed: ['holy', 'divine'],
 };
 
 // ═══════════════════════════════════════════════
@@ -531,8 +537,8 @@ function generateRoundNarrative(
   defenderName: string,
   attackerRoll: number,
   defenderRoll: number,
-  attackerDmg: number,
-  defenderDmg: number,
+  _attackerDmg: number,
+  _defenderDmg: number,
   round: number
 ): string {
   const narratives = {

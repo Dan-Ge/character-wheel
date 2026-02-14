@@ -14,7 +14,7 @@ export default function HomeScreen() {
     >
       {/* Logo / Title */}
       <div className="text-center space-y-3">
-        <h1 className="font-display text-5xl md:text-7xl font-black tracking-wider bg-gradient-to-r from-accent-light via-neon-cyan to-neon-pink bg-clip-text text-transparent">
+        <h1 className="font-display text-5xl md:text-7xl font-black tracking-wider bg-linear-to-r from-accent-light via-neon-cyan to-neon-pink bg-clip-text text-transparent">
           CHARACTER WHEEL
         </h1>
         <p className="text-surface-400 text-lg md:text-xl font-medium">
@@ -46,7 +46,7 @@ export default function HomeScreen() {
       <div className="flex flex-col gap-3 w-full max-w-xs">
         <button
           onClick={() => dispatch({ type: 'NAVIGATE', screen: 'spin' })}
-          className="w-full py-4 px-6 bg-gradient-to-r from-accent to-neon-pink rounded-xl font-display font-bold text-lg tracking-wide text-white shadow-lg shadow-accent/25 hover:shadow-accent/40 active:scale-95 transition-all duration-200"
+          className="w-full py-4 px-6 bg-linear-to-r from-accent to-neon-pink rounded-xl font-display font-bold text-lg tracking-wide text-white shadow-lg shadow-accent/25 hover:shadow-accent/40 active:scale-95 transition-all duration-200"
         >
           START RUN
         </button>
