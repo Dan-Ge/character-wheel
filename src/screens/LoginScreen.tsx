@@ -1,20 +1,22 @@
 // ── Login Screen ──
-// Auth screen with login / register tabs.
-// German UI with Supabase email+password authentication.
+// Standalone auth screen (accessible from settings / character-select).
+// Registration auto-generates a random hero username.
 
 import { useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePlayer } from '../context/PlayerContext';
+import { useGame } from '../context/GameContext';
+import { generateHeroName } from '../utils/heroNames';
 
 type AuthTab = 'login' | 'register';
 
 export default function LoginScreen() {
   const { login, register, error, clearError, loading } = usePlayer();
+  const { dispatch } = useGame();
 
   const [tab, setTab] = useState<AuthTab>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [localError, setLocalError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -35,20 +37,18 @@ export default function LoginScreen() {
       return;
     }
 
-    await login(email.trim(), password);
-  }, [email, password, login]);
+    const ok = await login(email.trim(), password);
+    if (ok) {
+      dispatch({ type: 'NAVIGATE', screen: 'home' });
+    }
+  }, [email, password, login, dispatch]);
 
   const handleRegister = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError(null);
 
-    if (!email.trim() || !password.trim() || !username.trim()) {
+    if (!email.trim() || !password.trim()) {
       setLocalError('Bitte fülle alle Felder aus.');
-      return;
-    }
-
-    if (username.trim().length < 3) {
-      setLocalError('Der Spielername muss mindestens 3 Zeichen lang sein.');
       return;
     }
 
@@ -62,11 +62,16 @@ export default function LoginScreen() {
       return;
     }
 
-    const ok = await register(email.trim(), password, username.trim());
+    const heroName = generateHeroName();
+    const ok = await register(email.trim(), password, heroName);
     if (ok) {
       setSuccess(true);
     }
-  }, [email, password, confirmPassword, username, register]);
+  }, [email, password, confirmPassword, register]);
+
+  const handleBack = useCallback(() => {
+    dispatch({ type: 'NAVIGATE', screen: 'home' });
+  }, [dispatch]);
 
   const displayError = localError || error;
 
@@ -78,6 +83,16 @@ export default function LoginScreen() {
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.4 }}
     >
+      {/* Back button */}
+      <div className="w-full max-w-sm">
+        <button
+          onClick={handleBack}
+          className="text-sm text-surface-400 hover:text-white transition-colors"
+        >
+          ← Zurück zum Spiel
+        </button>
+      </div>
+
       {/* Header */}
       <div className="text-center space-y-3">
         <h1 className="font-display text-4xl md:text-5xl font-black tracking-wider bg-linear-to-r from-accent-light via-neon-cyan to-neon-pink bg-clip-text text-transparent">
@@ -172,7 +187,9 @@ export default function LoginScreen() {
                     <div className="text-4xl">✅</div>
                     <p className="text-neon-green font-bold text-lg">Registrierung erfolgreich!</p>
                     <p className="text-sm text-surface-500">
-                      Prüfe deine E-Mail für den Bestätigungslink, dann melde dich an.
+                      Prüfe deine E-Mail für den Bestätigungslink.
+                      <br />
+                      Dein Heldenname wurde automatisch vergeben — du kannst ihn in den Einstellungen ändern.
                     </p>
                     <button
                       type="button"
@@ -184,18 +201,9 @@ export default function LoginScreen() {
                   </div>
                 ) : (
                   <>
-                    <div className="space-y-1.5">
-                      <label className="text-xs text-surface-500 uppercase tracking-wider font-bold">Spielername</label>
-                      <input
-                        type="text"
-                        value={username}
-                        onChange={e => setUsername(e.target.value)}
-                        placeholder="DeinName"
-                        maxLength={20}
-                        className="w-full px-4 py-3 bg-surface-200 border border-surface-300 rounded-xl text-white placeholder-surface-400 focus:border-neon-pink focus:outline-none transition-colors"
-                        autoComplete="username"
-                      />
-                    </div>
+                    <p className="text-xs text-surface-500 leading-relaxed">
+                      Ein zufälliger Heldenname wird dir automatisch zugewiesen. Du kannst ihn später in den Einstellungen ändern.
+                    </p>
                     <div className="space-y-1.5">
                       <label className="text-xs text-surface-500 uppercase tracking-wider font-bold">E-Mail</label>
                       <input

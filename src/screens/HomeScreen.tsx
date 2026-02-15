@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useGame } from '../context/GameContext';
+import { usePlayer } from '../context/PlayerContext';
 import { useSound } from '../hooks/useSound';
 import { cyberMythicSeason } from '../data/seasons/cyberMythic';
 import type { GameMode } from '../types';
@@ -14,6 +15,7 @@ const MODES: { id: GameMode; label: string; icon: string; color: string; hoverBo
 
 export default function HomeScreen() {
   const { state, dispatch } = useGame();
+  const { user, profile, logout } = usePlayer();
   const { play } = useSound();
 
   const season = cyberMythicSeason;
@@ -91,13 +93,22 @@ export default function HomeScreen() {
           📅 Daily Challenge
         </button>
 
-        {/* My Characters */}
-        <button
-          onClick={() => { play('navigate'); dispatch({ type: 'NAVIGATE', screen: 'character-select' }); }}
-          className="w-full py-3 px-4 bg-linear-to-r from-neon-green/10 to-surface-100 border border-neon-green/30 rounded-xl font-display font-bold text-sm tracking-wide text-neon-green hover:border-neon-green/50 active:scale-95 transition-all duration-200"
-        >
-          🗡️ Meine Charaktere
-        </button>
+        {/* My Characters (only if logged in) */}
+        {user ? (
+          <button
+            onClick={() => { play('navigate'); dispatch({ type: 'NAVIGATE', screen: 'character-select' }); }}
+            className="w-full py-3 px-4 bg-linear-to-r from-neon-green/10 to-surface-100 border border-neon-green/30 rounded-xl font-display font-bold text-sm tracking-wide text-neon-green hover:border-neon-green/50 active:scale-95 transition-all duration-200"
+          >
+            🗡️ Meine Charaktere
+          </button>
+        ) : (
+          <button
+            onClick={() => { play('navigate'); dispatch({ type: 'NAVIGATE', screen: 'login' }); }}
+            className="w-full py-3 px-4 bg-linear-to-r from-neon-green/10 to-surface-100 border border-neon-green/30 rounded-xl font-display font-bold text-sm tracking-wide text-neon-green hover:border-neon-green/50 active:scale-95 transition-all duration-200"
+          >
+            🔒 Anmelden / Registrieren
+          </button>
+        )}
 
         <div className="grid grid-cols-2 gap-3">
           <button
@@ -144,7 +155,7 @@ export default function HomeScreen() {
         ))}
       </div>
 
-      {/* Sound Toggle & Settings */}
+      {/* Sound Toggle & Settings & Profile */}
       <div className="flex items-center gap-4">
         <button
           onClick={handleToggleSound}
@@ -158,6 +169,14 @@ export default function HomeScreen() {
         >
           ⚙️ Settings
         </button>
+        {user && profile && (
+          <button
+            onClick={async () => { await logout(); }}
+            className="text-sm text-surface-400 hover:text-rarity-forbidden transition-colors ml-auto"
+          >
+            🚪 {profile.username}
+          </button>
+        )}
       </div>
 
       {/* Footer */}

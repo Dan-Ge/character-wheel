@@ -1,23 +1,48 @@
 import { useCallback, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGame } from '../context/GameContext';
+import { usePlayer } from '../context/PlayerContext';
 import ResultCard from '../components/ResultCard';
 import ShareCard from '../components/ShareCard';
+import AuthPromptModal from '../components/AuthPromptModal';
 import { copyShareCode } from '../utils/share';
 
 export default function ResultScreen() {
   const { state, dispatch } = useGame();
+  const { user } = usePlayer();
   const [showShare, setShowShare] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [showSaveWarning, setShowSaveWarning] = useState(false);
 
   const build = state.savedBuilds[0] ?? null;
 
   const handleNewRun = useCallback(() => {
+    // If not logged in, warn that the character won't be saved
+    if (!user) {
+      setShowSaveWarning(true);
+      return;
+    }
     dispatch({ type: 'NAVIGATE', screen: 'home' });
-  }, [dispatch]);
+  }, [dispatch, user]);
 
   const handleEnterStory = useCallback(() => {
+    // If not logged in, show auth prompt first
+    if (!user) {
+      setShowAuthPrompt(true);
+      return;
+    }
     dispatch({ type: 'NAVIGATE', screen: 'story' });
+  }, [dispatch, user]);
+
+  const handleStoryAfterAuth = useCallback(() => {
+    setShowAuthPrompt(false);
+    dispatch({ type: 'NAVIGATE', screen: 'story' });
+  }, [dispatch]);
+
+  const handleHomeAfterWarning = useCallback(() => {
+    setShowSaveWarning(false);
+    dispatch({ type: 'NAVIGATE', screen: 'home' });
   }, [dispatch]);
 
   const handleCopyCode = useCallback(async () => {
@@ -160,6 +185,22 @@ export default function ResultScreen() {
           ← New Run
         </button>
       </div>
+
+      {/* Auth Prompt for Story */}
+      <AuthPromptModal
+        variant="story"
+        open={showAuthPrompt}
+        onClose={() => setShowAuthPrompt(false)}
+        onContinue={handleStoryAfterAuth}
+      />
+
+      {/* Save Warning when going home */}
+      <AuthPromptModal
+        variant="save"
+        open={showSaveWarning}
+        onClose={() => setShowSaveWarning(false)}
+        onContinue={handleHomeAfterWarning}
+      />
     </motion.div>
   );
 }

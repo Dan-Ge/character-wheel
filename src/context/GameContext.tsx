@@ -63,7 +63,7 @@ function loadInitialState(): GameState {
   const stored = loadFromStorage();
 
   return {
-    currentScreen: 'character-select',
+    currentScreen: 'home',
     selectedSeason: null,
     gameMode: 'normal',
     currentRun: null,
