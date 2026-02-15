@@ -21,23 +21,23 @@ interface SpinWheelProps {
 // ─── Rarity → Color maps ───
 
 const RARITY_BG: Record<Rarity, string> = {
-  [Rarity.Common]:    '#1a1a2e',
-  [Rarity.Uncommon]:  '#0f2a1a',
-  [Rarity.Rare]:      '#0f1a2e',
-  [Rarity.Epic]:      '#1f0f2e',
-  [Rarity.Legendary]: '#2a2000',
-  [Rarity.Mythic]:    '#2a0f1f',
-  [Rarity.Forbidden]: '#2a0f0f',
+  [Rarity.Common]:    '#1e1e36',
+  [Rarity.Uncommon]:  '#122e1e',
+  [Rarity.Rare]:      '#121e36',
+  [Rarity.Epic]:      '#261240',
+  [Rarity.Legendary]: '#362a08',
+  [Rarity.Mythic]:    '#361228',
+  [Rarity.Forbidden]: '#361212',
 };
 
 const RARITY_LABEL: Record<Rarity, string> = {
-  [Rarity.Common]:    '#d1d5db',
+  [Rarity.Common]:    '#e5e7eb',
   [Rarity.Uncommon]:  '#86efac',
   [Rarity.Rare]:      '#93c5fd',
-  [Rarity.Epic]:      '#c084fc',
-  [Rarity.Legendary]: '#fde047',
-  [Rarity.Mythic]:    '#f9a8d4',
-  [Rarity.Forbidden]: '#fca5a5',
+  [Rarity.Epic]:      '#d8b4fe',
+  [Rarity.Legendary]: '#fef08a',
+  [Rarity.Mythic]:    '#fbcfe8',
+  [Rarity.Forbidden]: '#fecaca',
 };
 
 const RARITY_ICONS: Record<Rarity, string> = {
@@ -87,16 +87,16 @@ export default function SpinWheel({
 
     const props = {
       items,
-      borderColor: '#6366f1',
-      borderWidth: 2,
-      lineColor: '#374151',
-      lineWidth: 1,
+      borderColor: '#818cf8',
+      borderWidth: 3,
+      lineColor: '#4b5563',
+      lineWidth: 1.5,
       radius: 0.92,
       itemLabelRadius: 0.88,
       itemLabelRadiusMax: 0.35,
       itemLabelAlign: 'right' as const,
-      itemLabelFont: 'system-ui, sans-serif',
-      itemLabelFontSizeMax: 16,
+      itemLabelFont: "'Inter', system-ui, sans-serif",
+      itemLabelFontSizeMax: 20,
       itemLabelColors: items.map(i => i.labelColor),
       itemBackgroundColors: items.map(i => i.backgroundColor),
       pointerAngle: 90, // Pointer at the top (12 o'clock)
@@ -173,8 +173,8 @@ export default function SpinWheel({
         className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 z-10"
         style={{ filter: 'drop-shadow(0 0 4px rgba(99,102,241,0.6))' }}
       >
-        <svg width="24" height="20" viewBox="0 0 24 20">
-          <polygon points="12,20 0,0 24,0" fill="#6366f1" stroke="#818cf8" strokeWidth="1" />
+        <svg width="28" height="24" viewBox="0 0 28 24">
+          <polygon points="14,24 0,0 28,0" fill="#818cf8" stroke="#a5b4fc" strokeWidth="1.5" />
         </svg>
       </div>
 

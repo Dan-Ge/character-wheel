@@ -117,11 +117,11 @@ export default function SpinScreen() {
           ← Back
         </button>
         <div className="text-center">
-          <div className="font-display text-xs text-neon-cyan uppercase tracking-widest">
+          <div className="font-display text-sm text-neon-cyan uppercase tracking-widest">
             Wheel {currentWheelIndex + 1} / {totalWheels}
           </div>
           {currentWheel && (
-            <div className="text-sm text-surface-400 mt-1">
+            <div className="text-base text-surface-600 mt-1 font-medium">
               {currentWheel.icon} {currentWheel.name}
             </div>
           )}
@@ -136,7 +136,7 @@ export default function SpinScreen() {
           onSpinComplete={handleSpinComplete}
           spinning={phase === 'spinning'}
           targetSegmentId={lastResult?.segment.id}
-          size={320}
+          size={380}
           onTick={handleTick}
         />
       )}
@@ -191,12 +191,12 @@ export default function SpinScreen() {
             return (
               <div
                 key={`slot-${i}`}
-                className={`shrink-0 w-16 h-20 bg-surface-100 border rounded-lg flex flex-col items-center justify-center text-surface-400/50 text-xs gap-1 ${
+                className={`shrink-0 w-20 h-24 bg-surface-100 border-2 rounded-xl flex flex-col items-center justify-center text-surface-500 text-xs gap-1.5 ${
                   i === currentWheelIndex ? 'border-accent/50 animate-pulse' : 'border-dashed border-surface-300'
                 }`}
               >
-                <span>{wheel.icon}</span>
-                <span className="text-[8px] truncate" style={{ maxWidth: '56px' }}>{wheel.name}</span>
+                <span className="text-lg">{wheel.icon}</span>
+                <span className="text-[10px] font-medium truncate" style={{ maxWidth: '64px' }}>{wheel.name}</span>
               </div>
             );
           })}

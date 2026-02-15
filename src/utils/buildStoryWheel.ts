@@ -114,7 +114,7 @@ function calculateChoiceWeight(
   }
 
   // ── Acquired-trait synergy ──
-  const traitTags = character.acquiredTraits.flatMap(t => t.tags ?? []);
+  const traitTags = character.acquiredTraits.flatMap(t => t.grantedTags ?? []);
   if (choice.check?.tagBonus) {
     const traitHits = choice.check.tagBonus.filter(t => traitTags.includes(t)).length;
     w += traitHits * 3;

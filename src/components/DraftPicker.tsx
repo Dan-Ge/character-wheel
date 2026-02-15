@@ -62,7 +62,7 @@ export default function DraftPicker({ draft, onPick }: DraftPickerProps) {
           return (
             <motion.button
               key={seg.id || i}
-              className={`flex-1 max-w-[200px] bg-surface-100 border-2 ${style.border} rounded-xl p-4 text-left space-y-2 hover:bg-surface-200 transition-colors ${style.glow}`}
+              className={`flex-1 max-w-60 bg-surface-100 border-2 ${style.border} rounded-2xl p-5 text-left space-y-3 hover:bg-surface-200 transition-colors ${style.glow}`}
               initial={{ y: 40, opacity: 0, scale: 0.9 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               transition={{
@@ -77,28 +77,28 @@ export default function DraftPicker({ draft, onPick }: DraftPickerProps) {
             >
               {/* Rarity badge */}
               <div className="flex items-center justify-between">
-                <span className={`text-[10px] font-display uppercase tracking-wider ${style.label}`}>
+                <span className={`text-xs font-display uppercase tracking-wider ${style.label}`}>
                   {seg.rarity}
                 </span>
-                <span className="text-xs text-surface-400">#{i + 1}</span>
+                <span className="text-sm text-surface-500">#{i + 1}</span>
               </div>
 
               {/* Name */}
-              <div className={`font-bold text-sm ${style.label}`}>
+              <div className={`font-bold text-base ${style.label}`}>
                 {seg.label}
               </div>
 
               {/* Top effect */}
               {seg.effects.length > 0 && (
-                <p className="text-xs text-surface-400 leading-relaxed line-clamp-3">
+                <p className="text-sm text-surface-600 leading-relaxed line-clamp-3">
                   {seg.effects[0].description}
                 </p>
               )}
 
               {/* Tags */}
-              <div className="flex flex-wrap gap-1 pt-1">
+              <div className="flex flex-wrap gap-1.5 pt-1">
                 {seg.tags.map(tag => (
-                  <span key={tag} className="text-[9px] bg-surface-200 text-surface-400 px-1 py-0.5 rounded-full">
+                  <span key={tag} className="text-xs bg-surface-300 text-surface-600 px-1.5 py-0.5 rounded-full font-medium">
                     {tag}
                   </span>
                 ))}

@@ -62,7 +62,7 @@ export default function StoryScreen() {
   const [wheelSpinning, setWheelSpinning] = useState(false);
   const [wheelTargetId, setWheelTargetId] = useState<string | undefined>();
   const [chosenLabel, setChosenLabel] = useState<string | null>(null);
-  const resolveTimer = useRef<ReturnType<typeof setTimeout>>();
+  const resolveTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Build a WheelModule whenever the pending event changes
   const storyWheel = useMemo(() => {
@@ -172,41 +172,41 @@ export default function StoryScreen() {
       {/* Character Info */}
       {character && (
         <motion.div
-          className="w-full max-w-lg bg-surface-100 border border-accent/20 rounded-xl p-5 space-y-3"
+          className="w-full max-w-lg bg-surface-100 border border-accent/30 rounded-2xl p-6 space-y-4"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
         >
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-xl font-bold text-white">
+            <h2 className="font-display text-2xl font-bold text-white">
               {character.build.name}
             </h2>
-            <span className="text-xs bg-accent/20 text-accent px-2 py-1 rounded-full">
+            <span className="text-sm bg-accent/20 text-accent-light px-3 py-1 rounded-full font-bold">
               Lvl {character.level}
             </span>
           </div>
 
           {/* Race / World / Alignment / Rank Identity */}
           {rankInfo && (
-            <div className="bg-surface-200 rounded-lg p-3 space-y-2">
-              <div className="flex items-center gap-2 flex-wrap text-xs">
-                <span className="bg-surface-100 text-surface-300 px-2 py-0.5 rounded-full">🧬 {rankInfo.raceLabel}</span>
-                <span className="bg-surface-100 text-surface-300 px-2 py-0.5 rounded-full">🌍 {rankInfo.worldLabel}</span>
-                <span className="bg-surface-100 text-surface-300 px-2 py-0.5 rounded-full">⚖️ {rankInfo.alignLabel}</span>
+            <div className="bg-surface-200 rounded-xl p-4 space-y-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm bg-surface-300 text-white px-3 py-1 rounded-full font-medium">🧬 {rankInfo.raceLabel}</span>
+                <span className="text-sm bg-surface-300 text-white px-3 py-1 rounded-full font-medium">🌍 {rankInfo.worldLabel}</span>
+                <span className="text-sm bg-surface-300 text-white px-3 py-1 rounded-full font-medium">⚖️ {rankInfo.alignLabel}</span>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{rankInfo.current.icon}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{rankInfo.current.icon}</span>
                   <div>
-                    <div className="text-sm font-display text-neon-cyan font-bold">{rankInfo.current.label}</div>
-                    <div className="text-[10px] text-surface-500">{rankInfo.ladderName}</div>
+                    <div className="text-base font-display text-neon-cyan font-bold">{rankInfo.current.label}</div>
+                    <div className="text-xs text-surface-500">{rankInfo.ladderName}</div>
                   </div>
                 </div>
                 {rankInfo.next && (
                   <div className="text-right">
-                    <div className="text-[10px] text-surface-500">Nächster Rang</div>
-                    <div className="text-xs text-surface-300">{rankInfo.next.icon} {rankInfo.next.label}</div>
-                    <div className="text-[10px] text-surface-500">
+                    <div className="text-xs text-surface-500">Nächster Rang</div>
+                    <div className="text-sm text-white font-medium">{rankInfo.next.icon} {rankInfo.next.label}</div>
+                    <div className="text-xs text-surface-500">
                       {rankInfo.next.minXp - character.xp} XP | Lvl {rankInfo.next.minLevel}
                     </div>
                   </div>
@@ -216,30 +216,30 @@ export default function StoryScreen() {
           )}
 
           {/* Stats Bar */}
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-surface-400">❤️ HP</span>
+          <div className="grid grid-cols-2 gap-3 text-base">
+            <div className="flex justify-between bg-surface-200 rounded-lg px-3 py-2">
+              <span className="text-surface-600">❤️ HP</span>
               <span className="text-white font-bold">{character.hp} / {character.maxHp}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-surface-400">⭐ XP</span>
+            <div className="flex justify-between bg-surface-200 rounded-lg px-3 py-2">
+              <span className="text-surface-600">⭐ XP</span>
               <span className="text-white font-bold">{character.xp}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-surface-400">⚔️ Power</span>
+            <div className="flex justify-between bg-surface-200 rounded-lg px-3 py-2">
+              <span className="text-surface-600">⚔️ Power</span>
               <span className="text-neon-cyan font-bold">{character.powerTier}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-surface-400">🏆 Rep</span>
+            <div className="flex justify-between bg-surface-200 rounded-lg px-3 py-2">
+              <span className="text-surface-600">🏆 Rep</span>
               <span className="text-neon-orange font-bold">{Object.values(character.reputation).reduce((a, b) => a + b, 0)}</span>
             </div>
           </div>
 
           {/* Tags */}
           {character.build.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1">
-              {character.build.tags.slice(0, 8).map((tag: string) => (
-                <span key={tag} className="text-[10px] bg-surface-200 text-surface-400 px-2 py-0.5 rounded-full">
+            <div className="flex flex-wrap gap-1.5">
+              {character.build.tags.slice(0, 10).map((tag: string) => (
+                <span key={tag} className="text-xs bg-surface-300 text-surface-600 px-2.5 py-1 rounded-full font-medium">
                   {tag}
                 </span>
               ))}
@@ -256,11 +256,11 @@ export default function StoryScreen() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="bg-surface-100 border border-surface-300 rounded-xl p-5 space-y-3">
-            <h3 className="font-display text-lg text-neon-cyan">
+          <div className="bg-surface-100 border border-surface-300 rounded-2xl p-6 space-y-4">
+            <h3 className="font-display text-xl text-neon-cyan">
               📜 Dein Abenteuer beginnt...
             </h3>
-            <p className="text-sm text-surface-400 leading-relaxed">
+            <p className="text-base text-surface-600 leading-relaxed">
               {character.build.name} steht am Anfang einer epischen Reise. 
               Die Welt liegt vor dir — voller Gefahren, Geheimnisse und Schätze.
               Jede Entscheidung formt deine Geschichte.
@@ -268,10 +268,10 @@ export default function StoryScreen() {
 
             {/* Chapter Info */}
             {character.activeChapter && (
-              <div className="bg-surface-200 rounded-lg p-3 space-y-1">
-                <div className="text-xs text-accent uppercase tracking-wider">Aktuelles Kapitel</div>
-                <div className="text-sm text-white">{character.activeChapter.title}</div>
-                <div className="text-xs text-surface-400">
+              <div className="bg-surface-200 rounded-xl p-4 space-y-2">
+                <div className="text-xs text-accent uppercase tracking-wider font-bold">Aktuelles Kapitel</div>
+                <div className="text-base text-white font-medium">{character.activeChapter.title}</div>
+                <div className="text-sm text-surface-500">
                   Events: {character.activeChapter.currentEventIndex} / {character.activeChapter.totalEvents}
                 </div>
               </div>
@@ -299,13 +299,13 @@ export default function StoryScreen() {
 
           {/* Inventory quick view */}
           {character.inventory.length > 0 && (
-            <div className="bg-surface-100 border border-surface-300 rounded-xl p-4 space-y-2">
-              <div className="text-xs font-display text-neon-orange uppercase tracking-widest">
+            <div className="bg-surface-100 border border-surface-300 rounded-2xl p-5 space-y-3">
+              <div className="text-sm font-display text-neon-orange uppercase tracking-widest">
                 🎒 Inventar ({character.inventory.length})
               </div>
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-1.5">
                 {character.inventory.map(item => (
-                  <span key={item.id} className="text-xs bg-surface-200 text-surface-300 px-2 py-1 rounded-lg">
+                  <span key={item.id} className="text-sm bg-surface-200 text-white px-3 py-1 rounded-lg font-medium">
                     {item.name}
                   </span>
                 ))}
@@ -323,27 +323,27 @@ export default function StoryScreen() {
           animate={{ opacity: 1, y: 0 }}
         >
           {/* Event description */}
-          <div className="bg-surface-100 border border-neon-cyan/20 rounded-xl p-5 space-y-3">
-            <h3 className="font-display text-lg text-neon-cyan">
+          <div className="bg-surface-100 border border-neon-cyan/30 rounded-2xl p-6 space-y-3">
+            <h3 className="font-display text-xl text-neon-cyan">
               {pendingEvent.title}
             </h3>
-            <p className="text-sm text-surface-300 leading-relaxed">
+            <p className="text-base text-surface-600 leading-relaxed">
               {pendingEvent.description}
             </p>
           </div>
 
           {/* Choice legend */}
-          <div className="bg-surface-100 border border-surface-300 rounded-xl p-4 space-y-2">
-            <div className="text-xs font-display text-surface-400 uppercase tracking-widest">
+          <div className="bg-surface-100 border border-surface-300 rounded-2xl p-5 space-y-3">
+            <div className="text-sm font-display text-surface-500 uppercase tracking-widest">
               Mögliche Schicksale
             </div>
-            <div className="space-y-1">
+            <div className="space-y-2">
               {storyWheel.segments.map(seg => {
                 const matchingChoice = pendingEvent.choices.find(c => c.id === seg.id);
                 return (
-                  <div key={seg.id} className="flex items-start gap-2 text-xs">
+                  <div key={seg.id} className="flex items-start gap-3 text-sm">
                     <span
-                      className="inline-block w-3 h-3 rounded-sm shrink-0 mt-0.5"
+                      className="inline-block w-4 h-4 rounded-md shrink-0 mt-0.5"
                       style={{
                         backgroundColor:
                           seg.rarity === 'common' ? '#6b7280'
@@ -356,13 +356,13 @@ export default function StoryScreen() {
                       }}
                     />
                     <div>
-                      <span className="text-white">{seg.label}</span>
+                      <span className="text-white font-medium">{seg.label}</span>
                       {matchingChoice?.check && (
-                        <span className="text-surface-500 ml-1">
+                        <span className="text-surface-500 ml-2 text-xs">
                           DC {matchingChoice.check.difficulty}
                         </span>
                       )}
-                      <span className="text-surface-500 ml-1">
+                      <span className="text-surface-500 ml-2 text-xs">
                         (Gewicht: {seg.weight})
                       </span>
                     </div>
@@ -379,27 +379,27 @@ export default function StoryScreen() {
               onSpinComplete={handleStoryWheelComplete}
               spinning={wheelSpinning}
               targetSegmentId={wheelTargetId}
-              size={280}
+              size={340}
             />
 
             <AnimatePresence mode="wait">
               {chosenLabel ? (
                 <motion.div
                   key="result"
-                  className="text-center space-y-1"
+                  className="text-center space-y-2"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  <div className="text-xs text-surface-400 uppercase tracking-wider">Dein Schicksal</div>
-                  <div className="font-display text-lg text-neon-cyan">{chosenLabel}</div>
+                  <div className="text-sm text-surface-500 uppercase tracking-wider">Dein Schicksal</div>
+                  <div className="font-display text-xl text-neon-cyan font-bold">{chosenLabel}</div>
                 </motion.div>
               ) : (
                 <motion.button
                   key="spin-btn"
                   onClick={handleSpinStoryWheel}
                   disabled={wheelSpinning}
-                  className="py-3 px-8 bg-linear-to-r from-accent to-neon-cyan rounded-xl font-display font-bold text-white active:scale-95 transition-all disabled:opacity-40"
+                  className="py-4 px-10 bg-linear-to-r from-accent to-neon-cyan rounded-2xl font-display font-bold text-lg text-white active:scale-95 transition-all disabled:opacity-40 shadow-lg shadow-accent/20"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -442,15 +442,15 @@ export default function StoryScreen() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <div className="bg-surface-100 border border-rarity-forbidden/30 rounded-xl p-6 text-center space-y-4">
-            <div className="text-4xl">💀</div>
-            <h3 className="font-display text-xl text-rarity-forbidden">Gefallen</h3>
-            <p className="text-sm text-surface-400">
+          <div className="bg-surface-100 border border-rarity-forbidden/30 rounded-2xl p-8 text-center space-y-5">
+            <div className="text-5xl">💀</div>
+            <h3 className="font-display text-2xl text-rarity-forbidden">Gefallen</h3>
+            <p className="text-base text-surface-600">
               {character?.build.name} ist gefallen. Die Geschichte endet hier... oder doch nicht?
             </p>
             <button
               onClick={handleHome}
-              className="py-3 px-6 bg-surface-200 border border-surface-300 rounded-xl font-medium text-gray-300 active:scale-95 transition-all"
+              className="py-3 px-8 bg-surface-200 border border-surface-300 rounded-xl font-bold text-base text-white active:scale-95 transition-all"
             >
               Neues Abenteuer
             </button>
@@ -465,11 +465,11 @@ export default function StoryScreen() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="bg-surface-100 border border-neon-green/30 rounded-xl p-6 text-center space-y-4">
-            <div className="text-4xl">🏆</div>
-            <h3 className="font-display text-xl text-neon-green">Kapitel abgeschlossen!</h3>
+          <div className="bg-surface-100 border border-neon-green/30 rounded-2xl p-8 text-center space-y-5">
+            <div className="text-5xl">🏆</div>
+            <h3 className="font-display text-2xl text-neon-green">Kapitel abgeschlossen!</h3>
             {summary && (
-              <div className="text-sm text-surface-400 space-y-1">
+              <div className="text-base text-surface-600 space-y-1">
                 <p>Level: {summary.level} | XP: {summary.xp}</p>
                 <p>Titel: {summary.topTitles.join(', ') || 'Keine'}</p>
               </div>
@@ -499,12 +499,12 @@ export default function StoryScreen() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <div className="bg-surface-100 border border-rarity-mythic/30 rounded-xl p-6 text-center space-y-4">
-            <div className="text-4xl">✨</div>
-            <h3 className="font-display text-xl bg-linear-to-r from-rarity-mythic to-neon-pink bg-clip-text text-transparent">
+          <div className="bg-surface-100 border border-rarity-mythic/30 rounded-2xl p-8 text-center space-y-5">
+            <div className="text-5xl">✨</div>
+            <h3 className="font-display text-2xl bg-linear-to-r from-rarity-mythic to-neon-pink bg-clip-text text-transparent">
               Aufgestiegen!
             </h3>
-            <p className="text-sm text-surface-400">
+            <p className="text-base text-surface-600">
               {character?.build.name} hat die Grenzen der Sterblichkeit überschritten. 
               Eine Legende ist geboren.
             </p>

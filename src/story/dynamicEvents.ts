@@ -3,7 +3,7 @@
 // alignment, rank, and current state.
 // These overlay and extend the static storyEvents.ts.
 
-import type { StoryEvent, StoryChoice, StoryCharacter } from '../types/storyTypes';
+import type { StoryEvent, StoryCharacter } from '../types/storyTypes';
 import { Rarity } from '../types';
 import type { Tag } from '../types';
 import { getMatchingLadders, getCurrentRank, getNextRank } from '../data/rankSystem';
@@ -37,7 +37,7 @@ interface EventTemplate {
   /** Maximum rank tier (0 = no limit) */
   maxRankTier: number;
   /** Generate the event for the specific character */
-  generate: (character: StoryCharacter, rankLabel: string, nextRankLabel: string | null) => StoryEvent;
+  generate: (character: StoryCharacter, rankLabel: string, nextRankLabel: string | null) => Omit<StoryEvent, 'id'> & { id: string };
 }
 
 // ─── Event riskLevel colors for display ───
@@ -52,7 +52,7 @@ const TEMPLATES: EventTemplate[] = [
     alignmentIds: [],
     minRankTier: 0,
     maxRankTier: 2,
-    generate: (char, rank, nextRank) => ({
+    generate: (_char, rank, nextRank) => ({
       id: `dyn-kingdom-training-${Date.now()}`,
       title: 'Militärisches Training',
       description: `Als ${rank} im Eisernen Königreich wirst du zum Übungsplatz gerufen. Der Ausbilder mustert dich kritisch.`,
@@ -121,7 +121,7 @@ const TEMPLATES: EventTemplate[] = [
     alignmentIds: [],
     minRankTier: 2,
     maxRankTier: 5,
-    generate: (char, rank, nextRank) => ({
+    generate: (_char, rank, nextRank) => ({
       id: `dyn-kingdom-politics-${Date.now()}`,
       title: 'Politische Intrige',
       description: `Als ${rank} wirst du in die politischen Ränkespiele des Hofes hineingezogen. Ein Lord bietet dir eine Allianz an — aber zu welchem Preis?`,
@@ -192,7 +192,7 @@ const TEMPLATES: EventTemplate[] = [
     alignmentIds: [],
     minRankTier: 0,
     maxRankTier: 3,
-    generate: (char, rank) => ({
+    generate: (_char, rank) => ({
       id: `dyn-nexus-job-${Date.now()}`,
       title: 'Job vom Schwarzmarkt',
       description: `Dein Ruf als ${rank} hat sich herumgesprochen. Ein Fixer hat einen Job für dich — riskant, aber lukrativ.`,
@@ -284,7 +284,7 @@ const TEMPLATES: EventTemplate[] = [
     alignmentIds: [],
     minRankTier: 0,
     maxRankTier: 4,
-    generate: (char, rank) => ({
+    generate: (_char, rank) => ({
       id: `dyn-wild-beast-${Date.now()}`,
       title: 'Das Biest im Wald',
       description: `Die Wildnis testet dich, ${rank}. Ein mächtiges Wesen blockiert deinen Pfad.`,
@@ -353,7 +353,7 @@ const TEMPLATES: EventTemplate[] = [
     alignmentIds: [],
     minRankTier: 0,
     maxRankTier: 4,
-    generate: (char, rank) => ({
+    generate: (_char, rank) => ({
       id: `dyn-citadel-trial-${Date.now()}`,
       title: 'Prüfung der Tugend',
       description: `Als ${rank} der Himmelszitadelle musst du deine Würdigkeit beweisen. Ein göttliches Tribunal beobachtet.`,
@@ -422,7 +422,7 @@ const TEMPLATES: EventTemplate[] = [
     alignmentIds: [],
     minRankTier: 0,
     maxRankTier: 4,
-    generate: (char, rank) => ({
+    generate: (_char, rank) => ({
       id: `dyn-shadow-contract-${Date.now()}`,
       title: 'Auftrag aus dem Schatten',
       description: `Die Gilde hat einen neuen Auftrag für dich, ${rank}. Ein Ziel muss verschwinden.`,
@@ -493,7 +493,7 @@ const TEMPLATES: EventTemplate[] = [
     alignmentIds: [],
     minRankTier: 1,
     maxRankTier: 0,
-    generate: (char, rank) => ({
+    generate: (_char, rank) => ({
       id: `dyn-alliance-${Date.now()}`,
       title: 'Angebot einer Allianz',
       description: `Ein mächtiger Fremder erkennt deinen Rang als ${rank}. Er bietet dir eine Partnerschaft an.`,
@@ -577,7 +577,7 @@ const TEMPLATES: EventTemplate[] = [
     alignmentIds: [],
     minRankTier: 0,
     maxRankTier: 0,
-    generate: (char, rank, nextRank) => ({
+    generate: (_char, rank, nextRank) => ({
       id: `dyn-rank-trial-${Date.now()}`,
       title: nextRank ? `Aufstiegsprüfung: ${nextRank}` : 'Ultimative Prüfung',
       description: nextRank
@@ -644,11 +644,11 @@ const TEMPLATES: EventTemplate[] = [
     alignmentIds: [],
     minRankTier: 0,
     maxRankTier: 0,
-    generate: (char, rank) => ({
+    generate: (_char, _rank) => ({
       id: `dyn-demon-corruption-${Date.now()}`,
       title: 'Ruf der Dunkelheit',
       description: 'Dein dämonisches Blut brodelt. Eine dunkle Stimme flüstert dir zu — nimm mehr Macht, aber bezahle den Preis.',
-      category: 'moral_choice',
+      category: 'curse',
       triggerTags: ['fire', 'cursed'] as Tag[],
       minTier: 'novice',
       maxTier: 'ascendant',
@@ -704,11 +704,11 @@ const TEMPLATES: EventTemplate[] = [
     alignmentIds: [],
     minRankTier: 0,
     maxRankTier: 0,
-    generate: (char, rank) => ({
+    generate: (_char, _rank) => ({
       id: `dyn-angel-mission-${Date.now()}`,
       title: 'Göttlicher Auftrag',
       description: 'Ein himmlischer Bote erscheint. Du sollst eine heilige Aufgabe erfüllen — rette die Unschuldigen.',
-      category: 'quest',
+      category: 'divine',
       triggerTags: ['holy', 'divine'] as Tag[],
       minTier: 'novice',
       maxTier: 'ascendant',
@@ -773,7 +773,7 @@ const TEMPLATES: EventTemplate[] = [
     alignmentIds: [],
     minRankTier: 0,
     maxRankTier: 0,
-    generate: (char, rank) => ({
+    generate: (_char, _rank) => ({
       id: `dyn-cyborg-upgrade-${Date.now()}`,
       title: 'System-Upgrade verfügbar',
       description: 'Dein interner Diagnostik-Scan zeigt ein verfügbares Upgrade. Aber die Installation ist riskant.',

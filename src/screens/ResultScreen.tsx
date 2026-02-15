@@ -80,7 +80,7 @@ export default function ResultScreen() {
       </div>
 
       {/* Result Cards Grid */}
-      <div className="w-full max-w-lg grid grid-cols-2 gap-3">
+      <div className="w-full max-w-lg grid grid-cols-2 gap-4">
         {build.results.map((result, i) => (
           <div key={result.wheelId} className={i === build.results.length - 1 && build.results.length % 2 !== 0 ? 'col-span-2' : ''}>
             <ResultCard result={result} index={i} />
@@ -96,12 +96,12 @@ export default function ResultScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <div className="text-xs font-display text-accent uppercase tracking-widest">
+          <div className="text-sm font-display text-accent uppercase tracking-widest">
             ⚡ Signature Combo
           </div>
-          <div className="font-bold">{build.signatureCombo.name}</div>
-          <div className="text-sm text-surface-400">{build.signatureCombo.description}</div>
-          <div className="text-xs text-rarity-legendary">
+          <div className="font-bold text-lg">{build.signatureCombo.name}</div>
+          <div className="text-base text-surface-600">{build.signatureCombo.description}</div>
+          <div className="text-sm text-rarity-legendary font-medium">
             Power: {build.signatureCombo.power}
           </div>
         </motion.div>
@@ -115,18 +115,18 @@ export default function ResultScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <div className="text-xs font-display text-rarity-forbidden uppercase tracking-widest">
+          <div className="text-sm font-display text-rarity-forbidden uppercase tracking-widest">
             💀 Weak Spot
           </div>
-          <div className="text-sm text-surface-400">{build.weakSpot}</div>
+          <div className="text-base text-surface-600">{build.weakSpot}</div>
         </motion.div>
       )}
 
       {/* Tag Cloud */}
       {build.tags.length > 0 && (
-        <div className="w-full max-w-lg flex flex-wrap gap-1.5 justify-center">
+        <div className="w-full max-w-lg flex flex-wrap gap-2 justify-center">
           {build.tags.map(tag => (
-            <span key={tag} className="text-[10px] bg-surface-200 text-surface-400 px-2 py-0.5 rounded-full">
+            <span key={tag} className="text-xs bg-surface-300 text-surface-600 px-3 py-1 rounded-full font-medium">
               {tag}
             </span>
           ))}
