@@ -1,11 +1,11 @@
 // ── ShareCard ──
-// Screenshot-friendly character build summary card.
-// Renders as a styled div for visual display in the gallery.
+// Screenshot-friendly character build summary card with share actions.
 
-import { forwardRef } from 'react';
+import { forwardRef, useCallback, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { CharacterBuild } from '../types';
 import { Rarity } from '../types';
+import { copyShareCode, copyBuildSummary } from '../utils/share';
 
 // ─── Props ───
 
@@ -57,6 +57,25 @@ function MemeBar({ value }: { value: number }) {
 const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(
   function ShareCard({ build, onClose }, ref) {
     const tier = getScoreTier(build.score);
+    const [copied, setCopied] = useState<'none' | 'code' | 'summary'>('none');
+
+    const handleCopyCode = useCallback(async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const ok = await copyShareCode(build);
+      if (ok) {
+        setCopied('code');
+        setTimeout(() => setCopied('none'), 2000);
+      }
+    }, [build]);
+
+    const handleCopySummary = useCallback(async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const ok = await copyBuildSummary(build);
+      if (ok) {
+        setCopied('summary');
+        setTimeout(() => setCopied('none'), 2000);
+      }
+    }, [build]);
 
     return (
       <motion.div
@@ -147,7 +166,7 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(
           )}
 
           {/* Footer */}
-          <div className="px-5 py-3 bg-surface-100 border-t border-surface-300 space-y-2">
+          <div className="px-5 py-3 bg-surface-100 border-t border-surface-300 space-y-3">
             <MemeBar value={build.memePotential} />
             <div className="flex flex-wrap gap-1">
               {build.tags.slice(0, 8).map(tag => (
@@ -161,6 +180,23 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(
                 </span>
               )}
             </div>
+
+            {/* Share Actions */}
+            <div className="flex gap-2">
+              <button
+                onClick={handleCopyCode}
+                className="flex-1 py-2 bg-surface-200 border border-surface-300 rounded-lg text-xs font-medium text-gray-300 hover:border-accent/50 hover:text-white active:scale-95 transition-all"
+              >
+                {copied === 'code' ? '✅ Copied!' : '📋 Copy Code'}
+              </button>
+              <button
+                onClick={handleCopySummary}
+                className="flex-1 py-2 bg-linear-to-r from-accent/20 to-neon-cyan/20 border border-accent/30 rounded-lg text-xs font-medium text-white hover:border-accent/60 active:scale-95 transition-all"
+              >
+                {copied === 'summary' ? '✅ Copied!' : '📸 Copy Summary'}
+              </button>
+            </div>
+
             <div className="flex items-center justify-between text-[10px] text-surface-400/50 pt-1">
               <span>Share: {build.shareCode}</span>
               <span>characterwheel.app</span>

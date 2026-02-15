@@ -83,18 +83,38 @@ export default function HomeScreen() {
           START RUN
         </button>
 
-        <div className="flex gap-3">
+        {/* Daily Challenge */}
+        <button
+          onClick={() => { play('navigate'); dispatch({ type: 'NAVIGATE', screen: 'challenge' }); }}
+          className="w-full py-3 px-4 bg-linear-to-r from-neon-cyan/10 to-surface-100 border border-neon-cyan/30 rounded-xl font-display font-bold text-sm tracking-wide text-neon-cyan hover:border-neon-cyan/50 active:scale-95 transition-all duration-200"
+        >
+          📅 Daily Challenge
+        </button>
+
+        <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => { play('navigate'); dispatch({ type: 'NAVIGATE', screen: 'codex' }); }}
-            className="flex-1 py-3 px-4 bg-surface-100 border border-surface-300 rounded-xl font-medium text-sm text-gray-300 hover:border-accent/50 hover:text-white active:scale-95 transition-all duration-200"
+            className="py-3 px-4 bg-surface-100 border border-surface-300 rounded-xl font-medium text-sm text-gray-300 hover:border-accent/50 hover:text-white active:scale-95 transition-all duration-200"
           >
             📖 Codex
           </button>
           <button
             onClick={() => { play('navigate'); dispatch({ type: 'NAVIGATE', screen: 'gallery' }); }}
-            className="flex-1 py-3 px-4 bg-surface-100 border border-surface-300 rounded-xl font-medium text-sm text-gray-300 hover:border-accent/50 hover:text-white active:scale-95 transition-all duration-200"
+            className="py-3 px-4 bg-surface-100 border border-surface-300 rounded-xl font-medium text-sm text-gray-300 hover:border-accent/50 hover:text-white active:scale-95 transition-all duration-200"
           >
             🏆 Gallery
+          </button>
+          <button
+            onClick={() => { play('navigate'); dispatch({ type: 'NAVIGATE', screen: 'leaderboard' }); }}
+            className="py-3 px-4 bg-surface-100 border border-surface-300 rounded-xl font-medium text-sm text-gray-300 hover:border-rarity-legendary/50 hover:text-white active:scale-95 transition-all duration-200"
+          >
+            🏅 Leaderboard
+          </button>
+          <button
+            onClick={() => { play('navigate'); dispatch({ type: 'NAVIGATE', screen: 'achievements' }); }}
+            className="py-3 px-4 bg-surface-100 border border-surface-300 rounded-xl font-medium text-sm text-gray-300 hover:border-neon-orange/50 hover:text-white active:scale-95 transition-all duration-200"
+          >
+            🎖️ Achievements
           </button>
         </div>
       </div>
@@ -134,7 +154,7 @@ export default function HomeScreen() {
 
       {/* Footer */}
       <div className="text-xs text-surface-400/50 mt-auto pt-8">
-        v0.1.0 · Season 1: {season.name}
+        v1.0.0 · Season 1: {season.name}
       </div>
     </motion.div>
   );
