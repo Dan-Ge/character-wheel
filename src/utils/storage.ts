@@ -10,6 +10,8 @@ export interface StorageData {
   settings: unknown;
   stats: unknown;
   codexDiscovered: string[];
+  achievements: unknown[];
+  challengeResults: unknown[];
   lastUpdated: number;
 }
 
@@ -19,6 +21,8 @@ const DEFAULT_DATA: StorageData = {
   settings: null,
   stats: null,
   codexDiscovered: [],
+  achievements: [],
+  challengeResults: [],
   lastUpdated: Date.now(),
 };
 
@@ -117,6 +121,8 @@ function migrateData(data: Partial<StorageData>): StorageData {
     settings: data.settings ?? null,
     stats: data.stats ?? null,
     codexDiscovered: data.codexDiscovered ?? [],
+    achievements: data.achievements ?? [],
+    challengeResults: data.challengeResults ?? [],
     lastUpdated: Date.now(),
   };
 }

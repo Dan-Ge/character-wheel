@@ -217,6 +217,70 @@ export interface SpinOptions {
   seasonModifiers?: Modifier[];
 }
 
+// ─── Achievement ───
+
+export type AchievementCategory = 'runs' | 'collection' | 'score' | 'rarity' | 'special';
+
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: AchievementCategory;
+  check: (ctx: AchievementContext) => boolean;
+  secret?: boolean;       // Hidden until unlocked
+}
+
+export interface AchievementContext {
+  totalRuns: number;
+  bestScore: number;
+  totalSpins: number;
+  legendaryCount: number;
+  mythicCount: number;
+  forbiddenCount: number;
+  synergiesTriggered: number;
+  conflictsEncountered: number;
+  highestMeme: number;
+  codexCount: number;
+  buildCount: number;
+  totalSegments: number;         // Total available segments
+  challengesCompleted: number;
+  latestBuild: CharacterBuild | null;
+}
+
+export interface UnlockedAchievement {
+  achievementId: string;
+  unlockedAt: number;
+}
+
+// ─── Daily Challenge ───
+
+export interface DailyChallenge {
+  id: string;
+  date: string;             // YYYY-MM-DD
+  seed: string;
+  title: string;
+  description: string;
+  modifiers: ChallengeModifier[];
+  targetScore: number;
+  gameMode: GameMode;
+}
+
+export interface ChallengeModifier {
+  type: 'rarity_boost' | 'score_multiplier' | 'tag_focus' | 'restriction';
+  label: string;
+  description: string;
+  value: number;
+}
+
+export interface ChallengeResult {
+  challengeId: string;
+  date: string;
+  buildId: string;
+  score: number;
+  completedAt: number;
+}
+
 // ─── App Screen ───
 
 export type Screen =
@@ -227,4 +291,7 @@ export type Screen =
   | 'codex'
   | 'gallery'
   | 'settings'
-  | 'story';  // Story Adventure mode
+  | 'story'
+  | 'leaderboard'
+  | 'achievements'
+  | 'challenge';  // Daily Challenge mode

@@ -3,16 +3,27 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useGame } from '../context/GameContext';
 import ResultCard from '../components/ResultCard';
 import ShareCard from '../components/ShareCard';
+import { copyShareCode } from '../utils/share';
 
 export default function ResultScreen() {
   const { state, dispatch } = useGame();
   const [showShare, setShowShare] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
 
   const build = state.savedBuilds[0] ?? null;
 
   const handleNewRun = useCallback(() => {
     dispatch({ type: 'NAVIGATE', screen: 'home' });
   }, [dispatch]);
+
+  const handleCopyCode = useCallback(async () => {
+    if (!build) return;
+    const ok = await copyShareCode(build);
+    if (ok) {
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    }
+  }, [build]);
 
   if (!build) {
     return (
@@ -125,6 +136,12 @@ export default function ResultScreen() {
           className="w-full py-3 bg-linear-to-r from-neon-green to-neon-cyan rounded-xl font-display font-bold tracking-wide text-white active:scale-95 transition-all"
         >
           📸 Share Build
+        </button>
+        <button
+          onClick={handleCopyCode}
+          className="w-full py-3 bg-surface-100 border border-accent/30 rounded-xl font-medium text-sm text-gray-300 hover:border-accent/50 active:scale-95 transition-all"
+        >
+          {codeCopied ? '✅ Code Copied!' : `📋 Copy Code: ${build.shareCode}`}
         </button>
         <button
           onClick={handleNewRun}
