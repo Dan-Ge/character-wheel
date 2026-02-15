@@ -114,7 +114,7 @@ export const strengthWheel: WheelModule = {
       label: 'Seismic Force',
       rarity: Rarity.Legendary,
       weight: 5,
-      tags: ['heavy', 'elemental', 'brutal'],
+      tags: ['heavy', 'nature', 'brutal'],
       effects: [
         { type: 'stat_boost', target: 'strength', value: 28, description: '+28 Strength. Ground-shaking power.' },
         { type: 'ability', description: 'Earthquake Slam: AoE ground pound that stuns.' },

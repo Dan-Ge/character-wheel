@@ -89,7 +89,7 @@ export const speedWheel: WheelModule = {
       label: 'Wind Runner',
       rarity: Rarity.Epic,
       weight: 10,
-      tags: ['speed', 'elemental'],
+      tags: ['speed', 'nature'],
       effects: [
         { type: 'stat_boost', target: 'speed', value: 20, description: '+20 Speed. Ride the wind itself.' },
         { type: 'ability', description: 'Air Dash: Triple jump with wind propulsion.' },
@@ -114,7 +114,7 @@ export const speedWheel: WheelModule = {
       label: 'Lightning Dash',
       rarity: Rarity.Legendary,
       weight: 5,
-      tags: ['speed', 'elemental', 'cosmic'],
+      tags: ['speed', 'plasma', 'cosmic'],
       effects: [
         { type: 'stat_boost', target: 'speed', value: 28, description: '+28 Speed. Move at the speed of lightning.' },
         { type: 'ability', description: 'Thunder Strike: Arrive with a shockwave.' },

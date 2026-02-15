@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useGame } from '../context/GameContext';
 import { useRunManager } from '../hooks/useRunManager';
 import { useSound } from '../hooks/useSound';
-import Wheel from '../components/Wheel';
+import SpinWheel from '../components/SpinWheel';
 import { ResultMiniCard } from '../components/ResultCard';
 import EventToast from '../components/EventToast';
 import DraftPicker from '../components/DraftPicker';
@@ -131,7 +131,7 @@ export default function SpinScreen() {
 
       {/* Wheel */}
       {currentWheel && (
-        <Wheel
+        <SpinWheel
           wheel={currentWheel}
           onSpinComplete={handleSpinComplete}
           spinning={phase === 'spinning'}
@@ -196,7 +196,7 @@ export default function SpinScreen() {
                 }`}
               >
                 <span>{wheel.icon}</span>
-                <span className="text-[8px] truncate max-w-[56px]">{wheel.name}</span>
+                <span className="text-[8px] truncate" style={{ maxWidth: '56px' }}>{wheel.name}</span>
               </div>
             );
           })}

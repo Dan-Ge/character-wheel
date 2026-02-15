@@ -3,14 +3,13 @@
 // Allows the character to begin their own story after a wheel run.
 
 import { useCallback, useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useGame } from '../context/GameContext';
 import { useStory } from '../story/StoryContext';
-import type { StoryScreen as StoryScreenType } from '../types/storyTypes';
 
 export default function StoryScreen() {
   const { state, dispatch } = useGame();
-  const { storyState, storyDispatch, getSummary, getLastTurnResult, consumeNotifications } = useStory();
+  const { storyState, storyDispatch, getSummary } = useStory();
   const [initialized, setInitialized] = useState(false);
 
   const build = state.savedBuilds[0] ?? null;
@@ -37,7 +36,7 @@ export default function StoryScreen() {
   }, [dispatch, storyDispatch]);
 
   const handleStartChapter = useCallback(() => {
-    storyDispatch({ type: 'START_CHAPTER', difficulty: 1 });
+    storyDispatch({ type: 'START_CHAPTER', difficulty: 'normal' });
   }, [storyDispatch]);
 
   const handleGenerateEvent = useCallback(() => {
@@ -45,8 +44,9 @@ export default function StoryScreen() {
   }, [storyDispatch]);
 
   const handleResolveChoice = useCallback((choiceId: string) => {
-    storyDispatch({ type: 'RESOLVE_CHOICE', choiceId, seed: Date.now() });
-  }, [storyDispatch]);
+    const eventId = storyState.pendingEvent?.id ?? '';
+    storyDispatch({ type: 'RESOLVE_CHOICE', eventId, choiceId, seed: Date.now() });
+  }, [storyDispatch, storyState.pendingEvent]);
 
   const character = storyState.activeCharacter;
   const summary = getSummary();
@@ -107,7 +107,7 @@ export default function StoryScreen() {
         >
           <div className="flex items-center justify-between">
             <h2 className="font-display text-xl font-bold text-white">
-              {character.name}
+              {character.build.name}
             </h2>
             <span className="text-xs bg-accent/20 text-accent px-2 py-1 rounded-full">
               Lvl {character.level}
@@ -130,14 +130,14 @@ export default function StoryScreen() {
             </div>
             <div className="flex justify-between">
               <span className="text-surface-400">🏆 Rep</span>
-              <span className="text-neon-orange font-bold">{character.reputation}</span>
+              <span className="text-neon-orange font-bold">{Object.values(character.reputation).reduce((a, b) => a + b, 0)}</span>
             </div>
           </div>
 
           {/* Tags */}
-          {character.tags.length > 0 && (
+          {character.build.tags.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {character.tags.slice(0, 8).map(tag => (
+              {character.build.tags.slice(0, 8).map((tag: string) => (
                 <span key={tag} className="text-[10px] bg-surface-200 text-surface-400 px-2 py-0.5 rounded-full">
                   {tag}
                 </span>
@@ -160,7 +160,7 @@ export default function StoryScreen() {
               📜 Dein Abenteuer beginnt...
             </h3>
             <p className="text-sm text-surface-400 leading-relaxed">
-              {character.name} steht am Anfang einer epischen Reise. 
+              {character.build.name} steht am Anfang einer epischen Reise. 
               Die Welt liegt vor dir — voller Gefahren, Geheimnisse und Schätze.
               Jede Entscheidung formt deine Geschichte.
             </p>
@@ -171,7 +171,7 @@ export default function StoryScreen() {
                 <div className="text-xs text-accent uppercase tracking-wider">Aktuelles Kapitel</div>
                 <div className="text-sm text-white">{character.activeChapter.title}</div>
                 <div className="text-xs text-surface-400">
-                  Events: {character.activeChapter.eventsCompleted} / {character.activeChapter.eventsRequired}
+                  Events: {character.activeChapter.currentEventIndex} / {character.activeChapter.totalEvents}
                 </div>
               </div>
             )}
@@ -240,7 +240,7 @@ export default function StoryScreen() {
                   <div className="text-sm text-white font-medium">{choice.label}</div>
                   {choice.check && (
                     <div className="text-xs text-surface-400">
-                      🎲 {choice.check.tag} DC {choice.check.dc}
+                      🎲 {choice.check.target} DC {choice.check.difficulty}
                     </div>
                   )}
                 </button>
@@ -282,7 +282,7 @@ export default function StoryScreen() {
             <div className="text-4xl">💀</div>
             <h3 className="font-display text-xl text-rarity-forbidden">Gefallen</h3>
             <p className="text-sm text-surface-400">
-              {character?.name} ist gefallen. Die Geschichte endet hier... oder doch nicht?
+              {character?.build.name} ist gefallen. Die Geschichte endet hier... oder doch nicht?
             </p>
             <button
               onClick={handleHome}
@@ -306,8 +306,8 @@ export default function StoryScreen() {
             <h3 className="font-display text-xl text-neon-green">Kapitel abgeschlossen!</h3>
             {summary && (
               <div className="text-sm text-surface-400 space-y-1">
-                <p>Level: {summary.level} | XP: {summary.totalXp}</p>
-                <p>Titel: {summary.titles.join(', ') || 'Keine'}</p>
+                <p>Level: {summary.level} | XP: {summary.xp}</p>
+                <p>Titel: {summary.topTitles.join(', ') || 'Keine'}</p>
               </div>
             )}
             <div className="flex gap-3 justify-center pt-2">
@@ -341,7 +341,7 @@ export default function StoryScreen() {
               Aufgestiegen!
             </h3>
             <p className="text-sm text-surface-400">
-              {character?.name} hat die Grenzen der Sterblichkeit überschritten. 
+              {character?.build.name} hat die Grenzen der Sterblichkeit überschritten. 
               Eine Legende ist geboren.
             </p>
             <button
