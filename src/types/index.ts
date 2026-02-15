@@ -287,6 +287,8 @@ export interface ChallengeResult {
 // ─── App Screen ───
 
 export type Screen =
+  | 'login'
+  | 'character-select'
   | 'home'
   | 'season-select'
   | 'spin'

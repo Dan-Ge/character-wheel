@@ -91,6 +91,14 @@ export default function HomeScreen() {
           📅 Daily Challenge
         </button>
 
+        {/* My Characters */}
+        <button
+          onClick={() => { play('navigate'); dispatch({ type: 'NAVIGATE', screen: 'character-select' }); }}
+          className="w-full py-3 px-4 bg-linear-to-r from-neon-green/10 to-surface-100 border border-neon-green/30 rounded-xl font-display font-bold text-sm tracking-wide text-neon-green hover:border-neon-green/50 active:scale-95 transition-all duration-200"
+        >
+          🗡️ Meine Charaktere
+        </button>
+
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => { play('navigate'); dispatch({ type: 'NAVIGATE', screen: 'codex' }); }}

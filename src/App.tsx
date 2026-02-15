@@ -1,6 +1,9 @@
 import { AnimatePresence } from 'framer-motion';
 import { useGame } from './context/GameContext';
+import { usePlayer } from './context/PlayerContext';
 import { StoryProvider } from './story/StoryContext';
+import LoginScreen from './screens/LoginScreen';
+import CharacterSelectScreen from './screens/CharacterSelectScreen';
 import HomeScreen from './screens/HomeScreen';
 import SpinScreen from './screens/SpinScreen';
 import ResultScreen from './screens/ResultScreen';
@@ -15,6 +18,29 @@ import AchievementToast from './components/AchievementToast';
 
 function AppContent() {
   const { state } = useGame();
+  const { user, loading } = usePlayer();
+
+  // Show loading spinner while auth state is being resolved
+  if (loading) {
+    return (
+      <div className="min-h-dvh bg-surface text-white flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="text-4xl animate-spin">🎡</div>
+          <p className="text-surface-500 font-display">Laden…</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Not logged in → show login screen
+  if (!user) {
+    return (
+      <div className="min-h-dvh bg-surface text-white flex flex-col relative overflow-hidden">
+        <div className="fixed inset-0 bg-gradient-radial from-accent/5 via-transparent to-transparent pointer-events-none" />
+        <LoginScreen />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh bg-surface text-white flex flex-col relative overflow-hidden">
@@ -26,6 +52,7 @@ function AppContent() {
 
       {/* Screen Router */}
       <AnimatePresence mode="wait">
+        {state.currentScreen === 'character-select' && <CharacterSelectScreen key="char-select" />}
         {state.currentScreen === 'home' && <HomeScreen key="home" />}
         {state.currentScreen === 'spin' && <SpinScreen key="spin" />}
         {state.currentScreen === 'result' && <ResultScreen key="result" />}
