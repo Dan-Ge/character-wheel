@@ -4,7 +4,10 @@
 
 import type { Season, Segment } from '../../../types';
 import { Rarity } from '../../../types';
-import { statsWheel } from '../../wheels/statsWheel';
+import { speedWheel } from '../../wheels/speedWheel';
+import { strengthWheel } from '../../wheels/strengthWheel';
+import { intelligenceWheel } from '../../wheels/intelligenceWheel';
+import { powerMultiplierWheel } from '../../wheels/powerMultiplierWheel';
 import { powerWheel } from '../../wheels/powerWheel';
 import { gearWheel } from '../../wheels/gearWheel';
 import { companionWheel } from '../../wheels/companionWheel';
@@ -73,7 +76,10 @@ export const cyberMythicSeason: Season = {
     'Neon temples. Chrome knights. Digital prophecies. ' +
     'In this season, mythology is an upgrade — and technology is divine.',
   wheels: [
-    statsWheel,
+    speedWheel,
+    strengthWheel,
+    intelligenceWheel,
+    powerMultiplierWheel,
     powerWheel,
     gearWheel,
     companionWheel,

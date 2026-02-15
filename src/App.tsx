@@ -1,8 +1,10 @@
 import { AnimatePresence } from 'framer-motion';
 import { useGame } from './context/GameContext';
+import { StoryProvider } from './story/StoryContext';
 import HomeScreen from './screens/HomeScreen';
 import SpinScreen from './screens/SpinScreen';
 import ResultScreen from './screens/ResultScreen';
+import StoryScreen from './screens/StoryScreen';
 import CodexScreen from './screens/CodexScreen';
 import GalleryScreen from './screens/GalleryScreen';
 import SettingsScreen from './screens/SettingsScreen';
@@ -27,6 +29,7 @@ function AppContent() {
         {state.currentScreen === 'home' && <HomeScreen key="home" />}
         {state.currentScreen === 'spin' && <SpinScreen key="spin" />}
         {state.currentScreen === 'result' && <ResultScreen key="result" />}
+        {state.currentScreen === 'story' && <StoryScreen key="story" />}
         {state.currentScreen === 'codex' && <CodexScreen key="codex" />}
         {state.currentScreen === 'gallery' && <GalleryScreen key="gallery" />}
         {state.currentScreen === 'settings' && <SettingsScreen key="settings" />}
@@ -39,5 +42,9 @@ function AppContent() {
 }
 
 export default function App() {
-  return <AppContent />;
+  return (
+    <StoryProvider>
+      <AppContent />
+    </StoryProvider>
+  );
 }

@@ -27,7 +27,9 @@ export type Tag =
 // ─── Wheel Category ───
 
 export type WheelCategory =
-  | 'stats' | 'power' | 'gear' | 'companion'
+  | 'stats' | 'speed' | 'strength' | 'intelligence'
+  | 'power' | 'power-multiplier'
+  | 'gear' | 'companion'
   | 'origin' | 'flaw' | 'style';
 
 // ─── Segment (single slice of a wheel) ───

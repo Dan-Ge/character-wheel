@@ -1,6 +1,6 @@
 // ── useRunManager ──
-// Orchestrates the full 7-wheel spin loop.
-// Manages spin → draft → result → rules → advance flow.
+// Orchestrates the dynamic wheel spin loop.
+// Handles power multiplier → dynamic power wheel insertion.
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 import type {
@@ -16,6 +16,8 @@ import { generateDraft, applyDraftChoice, type DraftResult } from '../engine/dra
 import { applyRules } from '../engine/rulesResolver';
 import { finalizeBuild } from '../engine/buildFinalizer';
 import { cyberMythicSeason } from '../data/seasons/cyberMythic';
+import { powerWheel } from '../data/wheels/powerWheel';
+import { getPowerCount } from '../data/wheels/powerMultiplierWheel';
 import { useGame } from '../context/GameContext';
 
 // ─── Types ───
@@ -34,15 +36,27 @@ export interface RunState {
   completedBuild: CharacterBuild | null;
   overclockActive: boolean;
   draftMode: boolean;
+  /** Dynamic wheel sequence — built as we go */
+  wheelSequence: WheelModule[];
+  /** Whether the power multiplier has been resolved */
+  multiplierResolved: boolean;
 }
 
-const TOTAL_WHEELS = 7;
+// ─── Build initial wheel sequence (before multiplier resolution) ───
+
+function buildInitialSequence(seasonWheels: WheelModule[]): WheelModule[] {
+  // All wheels EXCEPT the power wheel (it gets inserted dynamically)
+  // Order: speed, strength, intelligence, power-multiplier, [power×N], gear, companion, origin, flaw, style
+  return seasonWheels.filter(w => w.category !== 'power');
+}
 
 // ─── Hook ───
 
 export function useRunManager() {
   const { dispatch } = useGame();
-  const wheels = useMemo(() => cyberMythicSeason.wheels, []);
+  const seasonWheels = useMemo(() => cyberMythicSeason.wheels, []);
+
+  const initialSequence = useMemo(() => buildInitialSequence(seasonWheels), [seasonWheels]);
 
   const [runState, setRunState] = useState<RunState>({
     phase: 'idle',
@@ -56,6 +70,8 @@ export function useRunManager() {
     completedBuild: null,
     overclockActive: false,
     draftMode: false,
+    wheelSequence: initialSequence,
+    multiplierResolved: false,
   });
 
   // Ref for spin animation timing
@@ -64,7 +80,8 @@ export function useRunManager() {
   // ── Start a new run ──
   const startRun = useCallback((overclock: boolean = false, draft: boolean = false) => {
     const ctx = createFreshContext(overclock, draft);
-    const firstWheel = wheels[0];
+    const seq = buildInitialSequence(seasonWheels);
+    const firstWheel = seq[0];
 
     setRunState({
       phase: 'idle',
@@ -78,14 +95,33 @@ export function useRunManager() {
       completedBuild: null,
       overclockActive: overclock,
       draftMode: draft,
+      wheelSequence: seq,
+      multiplierResolved: false,
     });
 
     dispatch({ type: 'START_RUN', context: ctx });
-  }, [wheels, dispatch]);
+  }, [seasonWheels, dispatch]);
+
+  // ── Expand sequence after power multiplier result ──
+  const expandSequenceWithPower = useCallback((
+    currentSeq: WheelModule[],
+    multiplierIdx: number,
+    powerCount: number,
+  ): WheelModule[] => {
+    // Insert powerCount copies of powerWheel right after the multiplier wheel
+    const before = currentSeq.slice(0, multiplierIdx + 1);
+    const after = currentSeq.slice(multiplierIdx + 1);
+    const powerWheels = Array.from({ length: powerCount }, (_, i) => ({
+      ...powerWheel,
+      id: `wheel-power-${i + 1}`,
+      name: powerCount > 1 ? `Power ${i + 1}` : 'Power',
+    }));
+    return [...before, ...powerWheels, ...after];
+  }, []);
 
   // ── Perform a spin ──
   const doSpin = useCallback((options: SpinOptions = {}) => {
-    const { currentWheel, context, draftMode, currentWheelIndex } = runState;
+    const { currentWheel, context, draftMode, currentWheelIndex, wheelSequence, multiplierResolved } = runState;
     if (!currentWheel || runState.phase === 'spinning') return;
 
     const mergedOptions: SpinOptions = {
@@ -95,7 +131,7 @@ export function useRunManager() {
 
     setRunState(prev => ({ ...prev, phase: 'spinning', events: [] }));
 
-    if (draftMode) {
+    if (draftMode && currentWheel.category !== 'power-multiplier') {
       // Draft mode: generate options, show after spin animation
       const draft = generateDraft(currentWheel, context, mergedOptions);
 
@@ -112,13 +148,24 @@ export function useRunManager() {
         }));
       }, 3200);
     } else {
-      // Normal mode: single spin
+      // Normal mode (or power-multiplier which always uses normal mode)
       const result = spin(currentWheel, context, mergedOptions);
 
       // After spin animation delay, reveal result
       spinTimeoutRef.current = setTimeout(() => {
         const updatedCtx = updateContextAfterSpin(context, result);
         const { updatedContext, events } = applyRules(updatedCtx, result);
+
+        // Check if this was the power multiplier wheel
+        const isMultiplier = currentWheel.category === 'power-multiplier';
+        let newSequence = wheelSequence;
+        let newMultiplierResolved = multiplierResolved;
+
+        if (isMultiplier && !multiplierResolved) {
+          const count = getPowerCount(result.segment.id);
+          newSequence = expandSequenceWithPower(wheelSequence, currentWheelIndex, count);
+          newMultiplierResolved = true;
+        }
 
         setRunState(prev => ({
           ...prev,
@@ -127,21 +174,23 @@ export function useRunManager() {
           lastResult: result,
           events,
           allEvents: [...prev.allEvents, ...events],
+          wheelSequence: newSequence,
+          multiplierResolved: newMultiplierResolved,
         }));
 
         dispatch({ type: 'UPDATE_RUN', context: updatedContext });
 
         // Auto-advance after reveal animation
         setTimeout(() => {
-          advanceToNext(updatedContext, currentWheelIndex);
+          advanceToNext(updatedContext, currentWheelIndex, newSequence);
         }, 1800);
       }, 3200);
     }
-  }, [runState, dispatch]);
+  }, [runState, dispatch, expandSequenceWithPower]);
 
   // ── Pick a draft option ──
   const pickDraft = useCallback((choiceIndex: number) => {
-    const { draftOptions, context, currentWheelIndex } = runState;
+    const { draftOptions, context, currentWheelIndex, wheelSequence } = runState;
     if (!draftOptions) return;
 
     const result = applyDraftChoice(draftOptions, choiceIndex);
@@ -161,15 +210,15 @@ export function useRunManager() {
     dispatch({ type: 'UPDATE_RUN', context: updatedContext });
 
     setTimeout(() => {
-      advanceToNext(updatedContext, currentWheelIndex);
+      advanceToNext(updatedContext, currentWheelIndex, wheelSequence);
     }, 1800);
   }, [runState, dispatch]);
 
   // ── Advance to next wheel or finish ──
-  const advanceToNext = useCallback((ctx: BuildContext, currentIdx: number) => {
+  const advanceToNext = useCallback((ctx: BuildContext, currentIdx: number, sequence: WheelModule[]) => {
     const nextIdx = currentIdx + 1;
 
-    if (nextIdx >= TOTAL_WHEELS) {
+    if (nextIdx >= sequence.length) {
       // Run complete — finalize build
       const build = finalizeBuild(ctx, cyberMythicSeason.id);
 
@@ -183,7 +232,7 @@ export function useRunManager() {
       dispatch({ type: 'FINALIZE_RUN', build });
     } else {
       // Next wheel
-      const nextWheel = wheels[nextIdx];
+      const nextWheel = sequence[nextIdx];
 
       setRunState(prev => ({
         ...prev,
@@ -197,11 +246,12 @@ export function useRunManager() {
 
       dispatch({ type: 'ADVANCE_WHEEL' });
     }
-  }, [wheels, dispatch]);
+  }, [dispatch]);
 
   // ── Reset / Abort ──
   const resetRun = useCallback(() => {
     if (spinTimeoutRef.current) clearTimeout(spinTimeoutRef.current);
+    const seq = buildInitialSequence(seasonWheels);
 
     setRunState({
       phase: 'idle',
@@ -215,10 +265,12 @@ export function useRunManager() {
       completedBuild: null,
       overclockActive: false,
       draftMode: false,
+      wheelSequence: seq,
+      multiplierResolved: false,
     });
 
     dispatch({ type: 'RESET_RUN' });
-  }, [dispatch]);
+  }, [seasonWheels, dispatch]);
 
   // ── Toggle overclock ──
   const toggleOverclock = useCallback(() => {
@@ -242,7 +294,7 @@ export function useRunManager() {
 
   return {
     ...runState,
-    totalWheels: TOTAL_WHEELS,
+    totalWheels: runState.wheelSequence.length,
     startRun,
     doSpin,
     pickDraft,

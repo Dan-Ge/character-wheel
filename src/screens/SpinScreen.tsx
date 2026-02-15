@@ -17,7 +17,7 @@ export default function SpinScreen() {
     lastResult, draftOptions, events,
     completedBuild, overclockActive, draftMode,
     totalWheels, startRun, doSpin, pickDraft, resetRun,
-    toggleOverclock, toggleDraft, canSpin,
+    toggleOverclock, toggleDraft, canSpin, wheelSequence,
   } = useRunManager();
   const { play } = useSound();
 
@@ -183,19 +183,20 @@ export default function SpinScreen() {
       {/* Collected Results strip */}
       <div className="w-full max-w-md">
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          {Array.from({ length: totalWheels }).map((_, i) => {
+          {wheelSequence.map((wheel, i) => {
             const r = collectedResults[i];
             if (r) {
-              return <ResultMiniCard key={r.wheelId} result={r} />;
+              return <ResultMiniCard key={`${r.wheelId}-${i}`} result={r} />;
             }
             return (
               <div
-                key={i}
-                className={`shrink-0 w-16 h-20 bg-surface-100 border rounded-lg flex items-center justify-center text-surface-400/50 text-xs ${
+                key={`slot-${i}`}
+                className={`shrink-0 w-16 h-20 bg-surface-100 border rounded-lg flex flex-col items-center justify-center text-surface-400/50 text-xs gap-1 ${
                   i === currentWheelIndex ? 'border-accent/50 animate-pulse' : 'border-dashed border-surface-300'
                 }`}
               >
-                ?
+                <span>{wheel.icon}</span>
+                <span className="text-[8px] truncate max-w-[56px]">{wheel.name}</span>
               </div>
             );
           })}

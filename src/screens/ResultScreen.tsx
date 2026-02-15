@@ -16,6 +16,10 @@ export default function ResultScreen() {
     dispatch({ type: 'NAVIGATE', screen: 'home' });
   }, [dispatch]);
 
+  const handleEnterStory = useCallback(() => {
+    dispatch({ type: 'NAVIGATE', screen: 'story' });
+  }, [dispatch]);
+
   const handleCopyCode = useCallback(async () => {
     if (!build) return;
     const ok = await copyShareCode(build);
@@ -131,6 +135,12 @@ export default function ResultScreen() {
 
       {/* Actions */}
       <div className="flex flex-col gap-3 w-full max-w-xs pb-8">
+        <button
+          onClick={handleEnterStory}
+          className="w-full py-3 bg-linear-to-r from-neon-pink via-accent to-neon-violet rounded-xl font-display font-bold tracking-wide text-white active:scale-95 transition-all shadow-lg shadow-accent/20"
+        >
+          📖 Story starten
+        </button>
         <button
           onClick={() => setShowShare(true)}
           className="w-full py-3 bg-linear-to-r from-neon-green to-neon-cyan rounded-xl font-display font-bold tracking-wide text-white active:scale-95 transition-all"
