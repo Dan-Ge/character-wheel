@@ -129,14 +129,15 @@ export function useRunManager() {
       overclock: runState.overclockActive,
     };
 
-    setRunState(prev => ({ ...prev, phase: 'spinning', events: [] }));
-
     if (draftMode && currentWheel.category !== 'power-multiplier') {
       // Draft mode: generate options, show after spin animation
       const draft = generateDraft(currentWheel, context, mergedOptions);
 
       // Pre-compute the "display" result (first option) for the wheel animation
       const displayResult = draft.options[0]?.result ?? null;
+
+      // Set spinning WITH the target so the wheel spins to the correct segment
+      setRunState(prev => ({ ...prev, phase: 'spinning', events: [], lastResult: displayResult }));
 
       // After spin animation delay, show draft options
       spinTimeoutRef.current = setTimeout(() => {
@@ -150,6 +151,9 @@ export function useRunManager() {
     } else {
       // Normal mode (or power-multiplier which always uses normal mode)
       const result = spin(currentWheel, context, mergedOptions);
+
+      // Set spinning WITH the target so the wheel spins to the correct segment
+      setRunState(prev => ({ ...prev, phase: 'spinning', events: [], lastResult: result }));
 
       // After spin animation delay, reveal result
       spinTimeoutRef.current = setTimeout(() => {

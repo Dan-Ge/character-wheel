@@ -99,7 +99,7 @@ export default function SpinWheel({
       itemLabelFontSizeMax: 20,
       itemLabelColors: items.map(i => i.labelColor),
       itemBackgroundColors: items.map(i => i.backgroundColor),
-      pointerAngle: 90, // Pointer at the top (12 o'clock)
+      pointerAngle: 0, // Pointer at the top (12 o'clock)
       rotationResistance: -60,
       isInteractive: false,
       onCurrentIndexChange: () => {
