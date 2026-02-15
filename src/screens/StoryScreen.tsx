@@ -1,6 +1,7 @@
 // ── Story Screen ──
 // Entry point for the story adventure mode.
 // Allows the character to begin their own story after a wheel run.
+// Features: Rank display, dynamic encounter wheel, branching story paths.
 
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,6 +9,7 @@ import { useGame } from '../context/GameContext';
 import { useStory } from '../story/StoryContext';
 import SpinWheel from '../components/SpinWheel';
 import { buildStoryWheel, pickWeightedChoiceId } from '../utils/buildStoryWheel';
+import { getMatchingLadders, getCurrentRank, getNextRank } from '../data/rankSystem';
 import type { Segment } from '../types';
 
 export default function StoryScreen() {
@@ -95,6 +97,34 @@ export default function StoryScreen() {
     }, 1200);
   }, [handleResolveChoice]);
 
+  // ── Rank info ──
+  const rankInfo = useMemo(() => {
+    if (!character) return null;
+    const worldSeg = character.build.results?.find(r => r.segment.id.startsWith('world-'));
+    const raceSeg = character.build.results?.find(r => r.segment.id.startsWith('race-'));
+    const alignSeg = character.build.results?.find(r => r.segment.id.startsWith('align-'));
+    if (!worldSeg) return null;
+
+    const worldId = worldSeg.segment.id;
+    const raceId = raceSeg?.segment.id ?? '';
+    const alignId = alignSeg?.segment.id ?? '';
+
+    const ladders = getMatchingLadders(worldId, raceId, alignId);
+    if (ladders.length === 0) return null;
+
+    const ladder = ladders[0];
+    const current = getCurrentRank(ladder, character.xp, character.level);
+    const next = getNextRank(ladder, character.xp, character.level);
+    return {
+      ladderName: ladder.name,
+      current,
+      next,
+      worldLabel: worldSeg.segment.label,
+      raceLabel: raceSeg?.segment.label ?? '???',
+      alignLabel: alignSeg?.segment.label ?? '???',
+    };
+  }, [character]);
+
   if (!build) {
     return (
       <motion.div
@@ -155,6 +185,35 @@ export default function StoryScreen() {
               Lvl {character.level}
             </span>
           </div>
+
+          {/* Race / World / Alignment / Rank Identity */}
+          {rankInfo && (
+            <div className="bg-surface-200 rounded-lg p-3 space-y-2">
+              <div className="flex items-center gap-2 flex-wrap text-xs">
+                <span className="bg-surface-100 text-surface-300 px-2 py-0.5 rounded-full">🧬 {rankInfo.raceLabel}</span>
+                <span className="bg-surface-100 text-surface-300 px-2 py-0.5 rounded-full">🌍 {rankInfo.worldLabel}</span>
+                <span className="bg-surface-100 text-surface-300 px-2 py-0.5 rounded-full">⚖️ {rankInfo.alignLabel}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{rankInfo.current.icon}</span>
+                  <div>
+                    <div className="text-sm font-display text-neon-cyan font-bold">{rankInfo.current.label}</div>
+                    <div className="text-[10px] text-surface-500">{rankInfo.ladderName}</div>
+                  </div>
+                </div>
+                {rankInfo.next && (
+                  <div className="text-right">
+                    <div className="text-[10px] text-surface-500">Nächster Rang</div>
+                    <div className="text-xs text-surface-300">{rankInfo.next.icon} {rankInfo.next.label}</div>
+                    <div className="text-[10px] text-surface-500">
+                      {rankInfo.next.minXp - character.xp} XP | Lvl {rankInfo.next.minLevel}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Stats Bar */}
           <div className="grid grid-cols-2 gap-2 text-sm">

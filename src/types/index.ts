@@ -30,7 +30,8 @@ export type WheelCategory =
   | 'stats' | 'speed' | 'strength' | 'intelligence'
   | 'power' | 'power-multiplier'
   | 'gear' | 'companion'
-  | 'origin' | 'flaw' | 'style';
+  | 'origin' | 'flaw' | 'style'
+  | 'race' | 'world' | 'alignment';
 
 // ─── Segment (single slice of a wheel) ───
 

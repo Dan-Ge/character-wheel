@@ -21,6 +21,7 @@ import type { Tag } from '../types';
 import { spinFateWheel } from './fateWheel';
 import { getEligibleEvents } from './storyEvents';
 import { getRegion } from './worldRegions';
+import { generateDynamicEvent } from './dynamicEvents';
 
 // ═══════════════════════════════════════════════
 // ─── Constants ───
@@ -117,6 +118,14 @@ export function generateNextEvent(
   const rng = seed ? mulberry32(seed) : Math.random;
   const region = getRegion(character.currentRegion);
   const regionTags = region?.dominantTags ?? [];
+
+  // 40 % chance to generate a dynamic event (based on world/race/rank)
+  if (rng() < 0.4) {
+    const dynEvent = generateDynamicEvent(character);
+    if (dynEvent) {
+      return { event: dynEvent, fateCategory: dynEvent.category };
+    }
+  }
 
   // Spin the Fate Wheel
   const fateResult = spinFateWheel(character, regionTags, rng);
