@@ -2,10 +2,13 @@
 // Entry point for the story adventure mode.
 // Allows the character to begin their own story after a wheel run.
 
-import { useCallback, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '../context/GameContext';
 import { useStory } from '../story/StoryContext';
+import SpinWheel from '../components/SpinWheel';
+import { buildStoryWheel, pickWeightedChoiceId } from '../utils/buildStoryWheel';
+import type { Segment } from '../types';
 
 export default function StoryScreen() {
   const { state, dispatch } = useGame();
@@ -52,6 +55,45 @@ export default function StoryScreen() {
   const summary = getSummary();
   const pendingEvent = storyState.pendingEvent;
   const screen = storyState.storyScreen;
+
+  // ── Story choice wheel state ──
+  const [wheelSpinning, setWheelSpinning] = useState(false);
+  const [wheelTargetId, setWheelTargetId] = useState<string | undefined>();
+  const [chosenLabel, setChosenLabel] = useState<string | null>(null);
+  const resolveTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  // Build a WheelModule whenever the pending event changes
+  const storyWheel = useMemo(() => {
+    if (!pendingEvent || !character) return null;
+    return buildStoryWheel(pendingEvent.choices, character, pendingEvent.title);
+  }, [pendingEvent, character]);
+
+  // Clean-up timer on unmount
+  useEffect(() => () => { clearTimeout(resolveTimer.current); }, []);
+
+  // Reset wheel state when a new event arrives
+  useEffect(() => {
+    setWheelSpinning(false);
+    setWheelTargetId(undefined);
+    setChosenLabel(null);
+  }, [pendingEvent?.id]);
+
+  const handleSpinStoryWheel = useCallback(() => {
+    if (!storyWheel || wheelSpinning) return;
+    const targetId = pickWeightedChoiceId(storyWheel.segments);
+    setWheelTargetId(targetId);
+    setWheelSpinning(true);
+    setChosenLabel(null);
+  }, [storyWheel, wheelSpinning]);
+
+  const handleStoryWheelComplete = useCallback((segment: Segment) => {
+    setWheelSpinning(false);
+    setChosenLabel(segment.label);
+    // Short delay so the player sees the result, then resolve
+    resolveTimer.current = setTimeout(() => {
+      handleResolveChoice(segment.id);
+    }, 1200);
+  }, [handleResolveChoice]);
 
   if (!build) {
     return (
@@ -215,37 +257,100 @@ export default function StoryScreen() {
       )}
 
       {/* Adventure - Event Display */}
-      {screen === 'adventure' && pendingEvent && (
+      {screen === 'adventure' && pendingEvent && storyWheel && (
         <motion.div
           className="w-full max-w-lg space-y-4"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="bg-surface-100 border border-neon-cyan/20 rounded-xl p-5 space-y-4">
+          {/* Event description */}
+          <div className="bg-surface-100 border border-neon-cyan/20 rounded-xl p-5 space-y-3">
             <h3 className="font-display text-lg text-neon-cyan">
               {pendingEvent.title}
             </h3>
             <p className="text-sm text-surface-300 leading-relaxed">
               {pendingEvent.description}
             </p>
+          </div>
 
-            {/* Choices */}
-            <div className="space-y-2 pt-2">
-              {pendingEvent.choices.map(choice => (
-                <button
-                  key={choice.id}
-                  onClick={() => handleResolveChoice(choice.id)}
-                  className="w-full text-left p-3 bg-surface-200 border border-surface-300 hover:border-accent/50 rounded-lg transition-all active:scale-[0.98] space-y-1"
-                >
-                  <div className="text-sm text-white font-medium">{choice.label}</div>
-                  {choice.check && (
-                    <div className="text-xs text-surface-400">
-                      🎲 {choice.check.target} DC {choice.check.difficulty}
-                    </div>
-                  )}
-                </button>
-              ))}
+          {/* Choice legend */}
+          <div className="bg-surface-100 border border-surface-300 rounded-xl p-4 space-y-2">
+            <div className="text-xs font-display text-surface-400 uppercase tracking-widest">
+              Mögliche Schicksale
             </div>
+            <div className="space-y-1">
+              {storyWheel.segments.map(seg => {
+                const matchingChoice = pendingEvent.choices.find(c => c.id === seg.id);
+                return (
+                  <div key={seg.id} className="flex items-start gap-2 text-xs">
+                    <span
+                      className="inline-block w-3 h-3 rounded-sm shrink-0 mt-0.5"
+                      style={{
+                        backgroundColor:
+                          seg.rarity === 'common' ? '#6b7280'
+                          : seg.rarity === 'uncommon' ? '#22c55e'
+                          : seg.rarity === 'rare' ? '#3b82f6'
+                          : seg.rarity === 'epic' ? '#a855f7'
+                          : seg.rarity === 'legendary' ? '#eab308'
+                          : seg.rarity === 'forbidden' ? '#ef4444'
+                          : '#9ca3af',
+                      }}
+                    />
+                    <div>
+                      <span className="text-white">{seg.label}</span>
+                      {matchingChoice?.check && (
+                        <span className="text-surface-500 ml-1">
+                          DC {matchingChoice.check.difficulty}
+                        </span>
+                      )}
+                      <span className="text-surface-500 ml-1">
+                        (Gewicht: {seg.weight})
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Spin Wheel */}
+          <div className="flex flex-col items-center gap-4">
+            <SpinWheel
+              wheel={storyWheel}
+              onSpinComplete={handleStoryWheelComplete}
+              spinning={wheelSpinning}
+              targetSegmentId={wheelTargetId}
+              size={280}
+            />
+
+            <AnimatePresence mode="wait">
+              {chosenLabel ? (
+                <motion.div
+                  key="result"
+                  className="text-center space-y-1"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <div className="text-xs text-surface-400 uppercase tracking-wider">Dein Schicksal</div>
+                  <div className="font-display text-lg text-neon-cyan">{chosenLabel}</div>
+                </motion.div>
+              ) : (
+                <motion.button
+                  key="spin-btn"
+                  onClick={handleSpinStoryWheel}
+                  disabled={wheelSpinning}
+                  className="py-3 px-8 bg-linear-to-r from-accent to-neon-cyan rounded-xl font-display font-bold text-white active:scale-95 transition-all disabled:opacity-40"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  🎰 Schicksal drehen!
+                </motion.button>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
       )}
