@@ -1,18 +1,47 @@
 import { useCallback, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGame } from '../context/GameContext';
+import { usePlayer } from '../context/PlayerContext';
 import ResultCard from '../components/ResultCard';
 import ShareCard from '../components/ShareCard';
+import AuthPromptModal from '../components/AuthPromptModal';
 import { copyShareCode } from '../utils/share';
 
 export default function ResultScreen() {
   const { state, dispatch } = useGame();
+  const { user } = usePlayer();
   const [showShare, setShowShare] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [showSaveWarning, setShowSaveWarning] = useState(false);
 
   const build = state.savedBuilds[0] ?? null;
 
   const handleNewRun = useCallback(() => {
+    // If not logged in, warn that the character won't be saved
+    if (!user) {
+      setShowSaveWarning(true);
+      return;
+    }
+    dispatch({ type: 'NAVIGATE', screen: 'home' });
+  }, [dispatch, user]);
+
+  const handleEnterStory = useCallback(() => {
+    // If not logged in, show auth prompt first
+    if (!user) {
+      setShowAuthPrompt(true);
+      return;
+    }
+    dispatch({ type: 'NAVIGATE', screen: 'story' });
+  }, [dispatch, user]);
+
+  const handleStoryAfterAuth = useCallback(() => {
+    setShowAuthPrompt(false);
+    dispatch({ type: 'NAVIGATE', screen: 'story' });
+  }, [dispatch]);
+
+  const handleHomeAfterWarning = useCallback(() => {
+    setShowSaveWarning(false);
     dispatch({ type: 'NAVIGATE', screen: 'home' });
   }, [dispatch]);
 
@@ -76,7 +105,7 @@ export default function ResultScreen() {
       </div>
 
       {/* Result Cards Grid */}
-      <div className="w-full max-w-lg grid grid-cols-2 gap-3">
+      <div className="w-full max-w-lg grid grid-cols-2 gap-4">
         {build.results.map((result, i) => (
           <div key={result.wheelId} className={i === build.results.length - 1 && build.results.length % 2 !== 0 ? 'col-span-2' : ''}>
             <ResultCard result={result} index={i} />
@@ -92,12 +121,12 @@ export default function ResultScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <div className="text-xs font-display text-accent uppercase tracking-widest">
+          <div className="text-sm font-display text-accent uppercase tracking-widest">
             ⚡ Signature Combo
           </div>
-          <div className="font-bold">{build.signatureCombo.name}</div>
-          <div className="text-sm text-surface-400">{build.signatureCombo.description}</div>
-          <div className="text-xs text-rarity-legendary">
+          <div className="font-bold text-lg">{build.signatureCombo.name}</div>
+          <div className="text-base text-surface-600">{build.signatureCombo.description}</div>
+          <div className="text-sm text-rarity-legendary font-medium">
             Power: {build.signatureCombo.power}
           </div>
         </motion.div>
@@ -111,18 +140,18 @@ export default function ResultScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <div className="text-xs font-display text-rarity-forbidden uppercase tracking-widest">
+          <div className="text-sm font-display text-rarity-forbidden uppercase tracking-widest">
             💀 Weak Spot
           </div>
-          <div className="text-sm text-surface-400">{build.weakSpot}</div>
+          <div className="text-base text-surface-600">{build.weakSpot}</div>
         </motion.div>
       )}
 
       {/* Tag Cloud */}
       {build.tags.length > 0 && (
-        <div className="w-full max-w-lg flex flex-wrap gap-1.5 justify-center">
+        <div className="w-full max-w-lg flex flex-wrap gap-2 justify-center">
           {build.tags.map(tag => (
-            <span key={tag} className="text-[10px] bg-surface-200 text-surface-400 px-2 py-0.5 rounded-full">
+            <span key={tag} className="text-xs bg-surface-300 text-surface-600 px-3 py-1 rounded-full font-medium">
               {tag}
             </span>
           ))}
@@ -131,6 +160,12 @@ export default function ResultScreen() {
 
       {/* Actions */}
       <div className="flex flex-col gap-3 w-full max-w-xs pb-8">
+        <button
+          onClick={handleEnterStory}
+          className="w-full py-3 bg-linear-to-r from-neon-pink via-accent to-neon-violet rounded-xl font-display font-bold tracking-wide text-white active:scale-95 transition-all shadow-lg shadow-accent/20"
+        >
+          📖 Story starten
+        </button>
         <button
           onClick={() => setShowShare(true)}
           className="w-full py-3 bg-linear-to-r from-neon-green to-neon-cyan rounded-xl font-display font-bold tracking-wide text-white active:scale-95 transition-all"
@@ -150,6 +185,22 @@ export default function ResultScreen() {
           ← New Run
         </button>
       </div>
+
+      {/* Auth Prompt for Story */}
+      <AuthPromptModal
+        variant="story"
+        open={showAuthPrompt}
+        onClose={() => setShowAuthPrompt(false)}
+        onContinue={handleStoryAfterAuth}
+      />
+
+      {/* Save Warning when going home */}
+      <AuthPromptModal
+        variant="save"
+        open={showSaveWarning}
+        onClose={() => setShowSaveWarning(false)}
+        onContinue={handleHomeAfterWarning}
+      />
     </motion.div>
   );
 }

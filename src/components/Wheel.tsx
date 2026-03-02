@@ -183,7 +183,7 @@ export default function Wheel({
   const maxLabelLen = segmentCount > 12 ? 10 : segmentCount > 8 ? 14 : 18;
 
   return (
-    <div className="relative" style={{ width: size, height: size }}>
+    <div className="relative" style={{ width: size, height: size, aspectRatio: '1 / 1' }}>
       {/* Pointer */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 z-10"
@@ -196,9 +196,10 @@ export default function Wheel({
 
       {/* Wheel SVG */}
       <svg
-        width={size}
-        height={size}
+        width="100%"
+        height="100%"
         viewBox={`0 0 ${size} ${size}`}
+        preserveAspectRatio="xMidYMid meet"
         className="drop-shadow-2xl"
       >
         <defs>

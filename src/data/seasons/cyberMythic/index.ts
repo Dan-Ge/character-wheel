@@ -4,13 +4,19 @@
 
 import type { Season, Segment } from '../../../types';
 import { Rarity } from '../../../types';
-import { statsWheel } from '../../wheels/statsWheel';
+import { speedWheel } from '../../wheels/speedWheel';
+import { strengthWheel } from '../../wheels/strengthWheel';
+import { intelligenceWheel } from '../../wheels/intelligenceWheel';
+import { powerMultiplierWheel } from '../../wheels/powerMultiplierWheel';
 import { powerWheel } from '../../wheels/powerWheel';
 import { gearWheel } from '../../wheels/gearWheel';
 import { companionWheel } from '../../wheels/companionWheel';
 import { originWheel } from '../../wheels/originWheel';
 import { flawWheel } from '../../wheels/flawWheel';
 import { styleWheel } from '../../wheels/styleWheel';
+import { raceWheel } from '../../wheels/raceWheel';
+import { worldWheel } from '../../wheels/worldWheel';
+import { alignmentWheel } from '../../wheels/alignmentWheel';
 
 // ─── Season-Exclusive Segments ───
 // Limited-time segments only available during Cyber Mythic.
@@ -73,7 +79,13 @@ export const cyberMythicSeason: Season = {
     'Neon temples. Chrome knights. Digital prophecies. ' +
     'In this season, mythology is an upgrade — and technology is divine.',
   wheels: [
-    statsWheel,
+    raceWheel,
+    worldWheel,
+    alignmentWheel,
+    speedWheel,
+    strengthWheel,
+    intelligenceWheel,
+    powerMultiplierWheel,
     powerWheel,
     gearWheel,
     companionWheel,

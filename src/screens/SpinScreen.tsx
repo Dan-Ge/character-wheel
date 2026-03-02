@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useGame } from '../context/GameContext';
 import { useRunManager } from '../hooks/useRunManager';
 import { useSound } from '../hooks/useSound';
-import Wheel from '../components/Wheel';
+import SpinWheel from '../components/SpinWheel';
 import { ResultMiniCard } from '../components/ResultCard';
 import EventToast from '../components/EventToast';
 import DraftPicker from '../components/DraftPicker';
@@ -17,7 +17,7 @@ export default function SpinScreen() {
     lastResult, draftOptions, events,
     completedBuild, overclockActive, draftMode,
     totalWheels, startRun, doSpin, pickDraft, resetRun,
-    toggleOverclock, toggleDraft, canSpin,
+    toggleOverclock, toggleDraft, canSpin, wheelSequence,
   } = useRunManager();
   const { play } = useSound();
 
@@ -117,11 +117,11 @@ export default function SpinScreen() {
           ← Back
         </button>
         <div className="text-center">
-          <div className="font-display text-xs text-neon-cyan uppercase tracking-widest">
+          <div className="font-display text-sm text-neon-cyan uppercase tracking-widest">
             Wheel {currentWheelIndex + 1} / {totalWheels}
           </div>
           {currentWheel && (
-            <div className="text-sm text-surface-400 mt-1">
+            <div className="text-base text-surface-600 mt-1 font-medium">
               {currentWheel.icon} {currentWheel.name}
             </div>
           )}
@@ -131,12 +131,12 @@ export default function SpinScreen() {
 
       {/* Wheel */}
       {currentWheel && (
-        <Wheel
+        <SpinWheel
           wheel={currentWheel}
           onSpinComplete={handleSpinComplete}
           spinning={phase === 'spinning'}
           targetSegmentId={lastResult?.segment.id}
-          size={320}
+          size={380}
           onTick={handleTick}
         />
       )}
@@ -183,19 +183,20 @@ export default function SpinScreen() {
       {/* Collected Results strip */}
       <div className="w-full max-w-md">
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          {Array.from({ length: totalWheels }).map((_, i) => {
+          {wheelSequence.map((wheel, i) => {
             const r = collectedResults[i];
             if (r) {
-              return <ResultMiniCard key={r.wheelId} result={r} />;
+              return <ResultMiniCard key={`${r.wheelId}-${i}`} result={r} />;
             }
             return (
               <div
-                key={i}
-                className={`shrink-0 w-16 h-20 bg-surface-100 border rounded-lg flex items-center justify-center text-surface-400/50 text-xs ${
+                key={`slot-${i}`}
+                className={`shrink-0 w-20 h-24 bg-surface-100 border-2 rounded-xl flex flex-col items-center justify-center text-surface-500 text-xs gap-1.5 ${
                   i === currentWheelIndex ? 'border-accent/50 animate-pulse' : 'border-dashed border-surface-300'
                 }`}
               >
-                ?
+                <span className="text-lg">{wheel.icon}</span>
+                <span className="text-[10px] font-medium truncate" style={{ maxWidth: '64px' }}>{wheel.name}</span>
               </div>
             );
           })}

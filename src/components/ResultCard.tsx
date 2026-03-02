@@ -92,13 +92,13 @@ function MiniCard({ result }: { result: SpinResult }) {
 
   return (
     <motion.div
-      className={`shrink-0 w-16 h-20 ${theme.bg} border ${theme.border} rounded-lg flex flex-col items-center justify-center gap-1 p-1 ${theme.glow}`}
+      className={`shrink-0 w-20 h-24 ${theme.bg} border-2 ${theme.border} rounded-xl flex flex-col items-center justify-center gap-1.5 p-1.5 ${theme.glow}`}
       initial={{ scale: 0, rotateY: 90 }}
       animate={{ scale: 1, rotateY: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
     >
-      <span className="text-lg">{icon}</span>
-      <span className={`text-[8px] font-medium text-center leading-tight ${theme.label}`}>
+      <span className="text-xl">{icon}</span>
+      <span className={`text-[10px] font-semibold text-center leading-tight ${theme.label}`}>
         {result.segment.label.length > 12
           ? result.segment.label.slice(0, 11) + '…'
           : result.segment.label}
@@ -118,7 +118,7 @@ export default function ResultCard({ result, index, compact }: ResultCardProps) 
 
   return (
     <motion.div
-      className={`${theme.bg} border-2 ${theme.border} rounded-xl p-4 space-y-3 ${theme.glow}`}
+      className={`${theme.bg} border-2 ${theme.border} rounded-2xl p-5 space-y-4 ${theme.glow}`}
       initial={{ scale: 0.3, rotateY: 90, opacity: 0 }}
       animate={{ scale: 1, rotateY: 0, opacity: 1 }}
       transition={{
@@ -129,34 +129,34 @@ export default function ResultCard({ result, index, compact }: ResultCardProps) 
       }}
     >
       <div className="flex items-start justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-xl">{icon}</span>
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">{icon}</span>
           <div>
-            <div className="text-xs text-surface-400 uppercase tracking-wider">
+            <div className="text-xs text-surface-600 uppercase tracking-wider">
               {result.wheelName}
             </div>
-            <div className={`font-bold ${theme.label}`}>
+            <div className={`font-bold text-lg ${theme.label}`}>
               {segment.label}
             </div>
           </div>
         </div>
-        <span className={`text-[10px] font-display uppercase tracking-wider px-2 py-0.5 rounded-full ${theme.badge}`}>
+        <span className={`text-xs font-display uppercase tracking-wider px-2.5 py-1 rounded-full ${theme.badge}`}>
           {segment.rarity}
         </span>
       </div>
 
       {segment.effects.length > 0 && (
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           {segment.effects.map((effect, i) => (
             <div key={i} className="flex items-start gap-2 text-sm">
-              <span className="text-surface-400 shrink-0">
+              <span className="text-surface-500 shrink-0 text-base">
                 {effect.type === 'ability' ? '⚔️' :
                  effect.type === 'passive' ? '🔄' :
                  effect.type === 'stat_boost' ? '📈' :
                  effect.type === 'curse' ? '☠️' :
                  effect.type === 'cosmetic' ? '🎨' : '🔗'}
               </span>
-              <span className="text-surface-400 text-xs leading-relaxed">
+              <span className="text-surface-600 text-sm leading-relaxed">
                 {effect.description}
               </span>
             </div>
@@ -165,11 +165,11 @@ export default function ResultCard({ result, index, compact }: ResultCardProps) 
       )}
 
       {segment.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-1.5">
           {segment.tags.map(tag => (
             <span
               key={tag}
-              className="text-[10px] bg-surface-200 text-surface-400 px-1.5 py-0.5 rounded-full"
+              className="text-xs bg-surface-300 text-surface-600 px-2 py-0.5 rounded-full font-medium"
             >
               {tag}
             </span>
@@ -178,7 +178,7 @@ export default function ResultCard({ result, index, compact }: ResultCardProps) 
       )}
 
       {segment.lore && (
-        <p className="text-xs text-surface-400/60 italic leading-relaxed border-t border-surface-300/50 pt-2">
+        <p className="text-sm text-surface-500 italic leading-relaxed border-t border-surface-300/50 pt-3">
           {segment.lore}
         </p>
       )}

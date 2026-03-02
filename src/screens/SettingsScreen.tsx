@@ -1,9 +1,10 @@
 // ── SettingsScreen ──
-// User settings, statistics overview, and data management.
+// User settings, statistics overview, data management, and player profile.
 
 import { useCallback, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useGame, type GameSettings, type GameStats } from '../context/GameContext';
+import { usePlayer } from '../context/PlayerContext';
 import { useSound } from '../hooks/useSound';
 import { exportData, importData, getStorageSize, clearStorage } from '../utils/storage';
 import type { CharacterBuild } from '../types';
@@ -30,10 +31,15 @@ function StatRow({ label, value, color }: { label: string; value: string | numbe
 
 export default function SettingsScreen() {
   const { state, dispatch } = useGame();
+  const { user, profile, updateProfile, logout } = usePlayer();
   const { play } = useSound();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [confirmClear, setConfirmClear] = useState(false);
+  const [editingUsername, setEditingUsername] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [usernameSaving, setUsernameSaving] = useState(false);
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const handleBack = useCallback(() => {
     play('navigate');
@@ -43,6 +49,21 @@ export default function SettingsScreen() {
   const handleToggle = useCallback((key: keyof GameSettings) => {
     dispatch({ type: 'UPDATE_SETTINGS', settings: { [key]: !state.settings[key] } });
   }, [dispatch, state.settings]);
+
+  const handleSaveUsername = useCallback(async () => {
+    if (!newUsername.trim() || newUsername.trim().length < 3) return;
+    setUsernameSaving(true);
+    const ok = await updateProfile({ username: newUsername.trim() });
+    setUsernameSaving(false);
+    setUsernameStatus(ok ? 'success' : 'error');
+    if (ok) setEditingUsername(false);
+    setTimeout(() => setUsernameStatus('idle'), 3000);
+  }, [newUsername, updateProfile]);
+
+  const handleLogout = useCallback(async () => {
+    await logout();
+    dispatch({ type: 'NAVIGATE', screen: 'home' });
+  }, [logout, dispatch]);
 
   const handleExport = useCallback(() => {
     play('navigate');
@@ -134,6 +155,83 @@ export default function SettingsScreen() {
           <Toggle label="🔊 Sound Effects" enabled={state.settings.soundEnabled} onToggle={() => handleToggle('soundEnabled')} />
           <Toggle label="🎭 Reduced Motion" enabled={state.settings.reducedMotion} onToggle={() => handleToggle('reducedMotion')} />
           <Toggle label="🃏 Draft Mode Default" enabled={state.settings.draftModeDefault} onToggle={() => handleToggle('draftModeDefault')} />
+        </section>
+
+        {/* ── Player Profile ── */}
+        <section className="bg-surface-100 border border-surface-300 rounded-xl p-4 space-y-3">
+          <h2 className="text-xs font-display text-neon-cyan uppercase tracking-widest mb-3">Spielerprofil</h2>
+          {user && profile ? (
+            <>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-surface-400">E-Mail</span>
+                <span className="text-sm text-white">{user.email}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-surface-400">Spielername</span>
+                {editingUsername ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={newUsername}
+                      onChange={e => setNewUsername(e.target.value)}
+                      maxLength={20}
+                      placeholder={profile.username}
+                      className="w-32 px-2 py-1 bg-surface-200 border border-surface-300 rounded-lg text-sm text-white placeholder-surface-400 focus:border-neon-cyan focus:outline-none"
+                    />
+                    <button
+                      onClick={handleSaveUsername}
+                      disabled={usernameSaving || newUsername.trim().length < 3}
+                      className="text-xs text-neon-green hover:text-neon-green/80 disabled:text-surface-400"
+                    >
+                      {usernameSaving ? '...' : '✓'}
+                    </button>
+                    <button
+                      onClick={() => setEditingUsername(false)}
+                      className="text-xs text-surface-400 hover:text-white"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-neon-cyan font-bold">{profile.username}</span>
+                    <button
+                      onClick={() => { setNewUsername(profile.username); setEditingUsername(true); }}
+                      className="text-[10px] text-surface-400 hover:text-white"
+                    >
+                      ✏️
+                    </button>
+                  </div>
+                )}
+              </div>
+              {usernameStatus === 'success' && (
+                <div className="text-xs text-neon-green text-center">✅ Name geändert!</div>
+              )}
+              {usernameStatus === 'error' && (
+                <div className="text-xs text-rarity-forbidden text-center">❌ Änderung fehlgeschlagen</div>
+              )}
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-surface-400">Dabei seit</span>
+                <span className="text-sm text-white">{new Date(profile.createdAt).toLocaleDateString('de-DE')}</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="w-full py-2 mt-2 bg-surface-200 border border-rarity-forbidden/30 rounded-lg text-sm text-rarity-forbidden/70 hover:text-rarity-forbidden hover:border-rarity-forbidden/50 active:scale-95 transition-all"
+              >
+                🚪 Abmelden
+              </button>
+            </>
+          ) : (
+            <div className="space-y-2 text-center">
+              <p className="text-sm text-surface-500">Du bist nicht angemeldet.</p>
+              <button
+                onClick={() => dispatch({ type: 'NAVIGATE', screen: 'login' })}
+                className="w-full py-2 bg-linear-to-r from-accent to-neon-cyan rounded-lg font-display font-bold text-sm text-white active:scale-95 transition-all"
+              >
+                🔑 Anmelden / Registrieren
+              </button>
+            </div>
+          )}
         </section>
 
         {/* ── Statistics ── */}

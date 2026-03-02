@@ -26,7 +26,7 @@ export default function AchievementToast() {
       {achievement && (
         <motion.div
           key={achievement.id}
-          className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-[90vw] max-w-sm"
+          className="fixed top-4 left-1/2 -translate-x-1/2 z-100 w-[90vw] max-w-sm"
           initial={{ opacity: 0, y: -60, scale: 0.8 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -40, scale: 0.9 }}
